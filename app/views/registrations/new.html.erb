@@ -62,17 +62,36 @@
         </div>
 
         <div>
-          <%= form.label :role, "Account Type", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.select :role, 
-                           options_for_select([
-                             ['Supporter - Follow and support missionaries', 'supporter'],
-                             ['Missionary - Share ministry updates and connect with supporters', 'missionary']
-                           ], @user.role),
-                           { prompt: 'Select your role...' },
-                           { required: true, class: "block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" } %>
+          <%= form.label :role, "Account Type", class: "block text-sm font-medium text-gray-700 mb-3" %>
+          <div class="space-y-3">
+            <div class="flex items-start">
+              <div class="flex items-center h-5">
+                <%= form.radio_button :role, 'supporter', 
+                                     class: "h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500", 
+                                     required: true %>
+              </div>
+              <div class="ml-3">
+                <%= form.label :role_supporter, class: "block text-sm font-medium text-gray-900" do %>
+                  Supporter
+                <% end %>
+                <p class="text-sm text-gray-600">Follow missionaries, receive updates, and provide prayer and financial support to ministries around the world.</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="flex items-center h-5">
+                <%= form.radio_button :role, 'missionary', 
+                                     class: "h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500", 
+                                     required: true %>
+              </div>
+              <div class="ml-3">
+                <%= form.label :role_missionary, class: "block text-sm font-medium text-gray-900" do %>
+                  Missionary
+                <% end %>
+                <p class="text-sm text-gray-600">Share ministry updates, prayer requests, and connect with supporters. <span class="font-medium text-blue-600">Requires approval.</span></p>
+              </div>
+            </div>
           </div>
-          <p class="mt-1 text-xs text-gray-600">This helps us customize your experience on the platform.</p>
         </div>
 
         <div>
@@ -115,18 +134,38 @@
       <% end %>
     </div>
 
-    <!-- Information about approval process -->
-    <div class="mt-8 bg-blue-50 rounded-lg p-6">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-          </svg>
+    <!-- Information about account types and approval process -->
+    <div class="mt-8 space-y-4">
+      <!-- Supporter info -->
+      <div class="bg-green-50 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-green-800">Supporter Accounts</h3>
+            <div class="mt-1 text-sm text-green-700">
+              <p>Instant access to follow missionaries, receive updates, and connect with ministries worldwide.</p>
+            </div>
+          </div>
         </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-blue-800">Account Approval</h3>
-          <div class="mt-2 text-sm text-blue-700">
-            <p>Missionary accounts require approval to ensure the safety and authenticity of our platform. You'll receive an email notification once your account is approved.</p>
+      </div>
+
+      <!-- Missionary info -->
+      <div class="bg-blue-50 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">Missionary Accounts</h3>
+            <div class="mt-1 text-sm text-blue-700">
+              <p>Requires admin approval to ensure platform safety and authenticity. You'll receive an email notification once approved and can then create your ministry profile.</p>
+            </div>
           </div>
         </div>
       </div>
