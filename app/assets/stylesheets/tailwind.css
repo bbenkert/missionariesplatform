@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Ensure all utilities are available */
+@layer utilities {
+  @include "tailwindcss/utilities";
+}

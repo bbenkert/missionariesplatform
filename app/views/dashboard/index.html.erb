@@ -1,0 +1,103 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <div class="px-4 py-6 sm:px-0">
+    <div class="border-4 border-dashed border-gray-200 rounded-lg p-8">
+      <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+          Welcome, <%= current_user.name %>!
+        </h1>
+        
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p class="text-blue-800">
+            <strong>Role:</strong> <%= current_user.role.humanize %>
+          </p>
+          <p class="text-blue-800">
+            <strong>Status:</strong> <%= current_user.status.humanize %>
+          </p>
+          <p class="text-blue-800">
+            <strong>Email:</strong> <%= current_user.email %>
+          </p>
+        </div>
+
+        <% if current_user.admin? %>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Total Users</h3>
+              <p class="text-3xl font-bold text-blue-600"><%= User.count %></p>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Active Missionaries</h3>
+              <p class="text-3xl font-bold text-green-600"><%= User.missionary.approved.count %></p>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Active Supporters</h3>
+              <p class="text-3xl font-bold text-purple-600"><%= User.supporter.approved.count %></p>
+            </div>
+          </div>
+          
+          <div class="space-x-4">
+            <%= link_to "Manage Users", admin_users_path, 
+                        class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+            <%= link_to "View Reports", admin_reports_path, 
+                        class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+          </div>
+        <% elsif current_user.missionary? %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Your Followers</h3>
+              <p class="text-3xl font-bold text-blue-600">
+                <%= current_user.missionary_profile&.supporter_followings&.count || 0 %>
+              </p>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Your Updates</h3>
+              <p class="text-3xl font-bold text-green-600">
+                <%= current_user.missionary_updates&.count || 0 %>
+              </p>
+            </div>
+          </div>
+          
+          <div class="space-x-4">
+            <%= link_to "Edit Profile", edit_missionary_profile_path, 
+                        class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+            <%= link_to "Create Update", new_missionary_update_path, 
+                        class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+            <%= link_to "View Messages", conversations_path, 
+                        class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+          </div>
+        <% else %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Following</h3>
+              <p class="text-3xl font-bold text-blue-600">
+                <%= current_user.supporter_followings&.count || 0 %>
+              </p>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Messages</h3>
+              <p class="text-3xl font-bold text-green-600">
+                <%= current_user.conversations&.count || 0 %>
+              </p>
+            </div>
+          </div>
+          
+          <div class="space-x-4">
+            <%= link_to "Browse Missionaries", missionaries_path, 
+                        class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+            <%= link_to "View Messages", conversations_path, 
+                        class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+            <%= link_to "Edit Preferences", edit_preferences_path, 
+                        class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-md text-sm font-medium" %>
+          </div>
+        <% end %>
+        
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <p class="text-sm text-gray-500">
+            Last sign in: <%= current_user.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

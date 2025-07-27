@@ -1,0 +1,215 @@
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+        Unite. Pray. Serve.
+        <span class="text-blue-600 block">Support God's Servants</span>
+      </h1>
+      <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+        Connecting faithful supporters with missionaries around the world. 
+        Join our community to encourage, pray for, and follow the journeys of those 
+        called to share the Gospel in every corner of the earth.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <%= link_to missionaries_path, 
+            class: "bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors" do %>
+          Discover Missionaries
+        <% end %>
+        <%= link_to sign_up_path, 
+            class: "border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors" do %>
+          Join Our Community
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="text-4xl font-bold text-blue-600 mb-2"><%= @stats[:active_missionaries] %>+</div>
+        <div class="text-gray-600">Active Missionaries</div>
+      </div>
+      <div>
+        <div class="text-4xl font-bold text-green-600 mb-2"><%= @stats[:countries_reached] %>+</div>
+        <div class="text-gray-600">Countries Reached</div>
+      </div>
+      <div>
+        <div class="text-4xl font-bold text-purple-600 mb-2"><%= @stats[:total_supporters] %>+</div>
+        <div class="text-gray-600">Prayer Warriors</div>
+      </div>
+      <div>
+        <div class="text-4xl font-bold text-amber-600 mb-2"><%= @stats[:total_updates] %>+</div>
+        <div class="text-gray-600">Prayer Updates</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        Why Choose Our Platform?
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Join a community dedicated to supporting missionaries and advancing the Gospel worldwide.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Global Reach</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Connect with missionaries serving in <%= @stats[:countries_reached] %>+ countries worldwide. 
+          Experience the global impact of the Gospel through their eyes.
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Real Connection</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Build meaningful relationships with missionaries through personal updates, 
+          prayer requests, and authentic community interaction.
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Secure & Trusted</h3>
+        <p class="text-gray-600 leading-relaxed">
+          All missionaries are verified members of established mission organizations, 
+          ensuring authentic and safe connections within our community.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Missionaries -->
+<% if @featured_missionaries.any? %>
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Missionaries</h2>
+      <p class="text-xl text-gray-600">Meet some of the amazing missionaries serving around the world</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <% @featured_missionaries.each do |missionary| %>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <% if missionary.avatar.attached? %>
+                <%= image_tag missionary.avatar_url(:medium), 
+                    class: "w-12 h-12 rounded-full object-cover", 
+                    alt: missionary.name %>
+              <% else %>
+                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                  <span class="text-gray-600 font-semibold"><%= missionary.name.first %></span>
+                </div>
+              <% end %>
+              <div class="ml-3">
+                <h3 class="text-lg font-semibold text-gray-900"><%= missionary.name %></h3>
+                <p class="text-gray-600"><%= missionary.missionary_profile.location_display %></p>
+              </div>
+            </div>
+            <p class="text-gray-600 mb-4"><%= truncate(missionary.missionary_profile.bio, length: 150) %></p>
+            <%= link_to "Learn More", missionary_path(missionary), 
+                class: "text-blue-600 hover:text-blue-800 font-medium" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="text-center mt-12">
+      <%= link_to missionaries_path, 
+          class: "bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors" do %>
+        View All Missionaries
+      <% end %>
+    </div>
+  </div>
+</section>
+<% end %>
+
+<!-- Recent Updates -->
+<% if @stats[:recent_updates].any? %>
+<section class="py-20 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">Recent Updates</h2>
+      <p class="text-xl text-gray-600">Latest news from the mission field</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% @stats[:recent_updates].each do |update| %>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <div class="flex items-center mb-3">
+            <% if update.user.avatar.attached? %>
+              <%= image_tag update.user.avatar_url(:small), 
+                  class: "w-8 h-8 rounded-full object-cover", 
+                  alt: update.user.name %>
+            <% else %>
+              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span class="text-gray-600 text-sm font-semibold"><%= update.user.name.first %></span>
+              </div>
+            <% end %>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-900"><%= update.user.name %></p>
+              <p class="text-xs text-gray-500"><%= time_ago_in_words(update.created_at) %> ago</p>
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= update.title %></h3>
+          <p class="text-gray-600 text-sm"><%= update.excerpt %></p>
+          <div class="mt-4">
+            <span class="inline-block px-2 py-1 text-xs rounded-full <%= update.type_badge_class %>">
+              <%= update.update_type.humanize %>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+<% end %>
+
+<!-- Call to Action -->
+<section class="py-20 bg-blue-600">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+      Start Supporting Missionaries Today
+    </h2>
+    <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+      Join thousands of supporters who are making a difference in the lives of missionaries 
+      and the communities they serve. Your encouragement matters more than you know.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <%= link_to sign_up_path + "?role=supporter", 
+          class: "bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors" do %>
+        Join as Supporter
+      <% end %>
+      <%= link_to sign_up_path + "?role=missionary", 
+          class: "border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors" do %>
+        Register as Missionary
+      <% end %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,109 @@
+<% content_for :title, "Sign In" %>
+
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="text-center">
+      <%= link_to root_path, class: "text-3xl font-bold text-blue-600" do %>
+        Missionary Platform
+      <% end %>
+    </div>
+    <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
+      Sign in to your account
+    </h2>
+    <p class="mt-2 text-center text-sm text-gray-600">
+      Or
+      <%= link_to "create a new account", sign_up_path, class: "font-medium text-blue-600 hover:text-blue-500" %>
+    </p>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <%= form_with url: sign_in_path, method: :post, local: true, class: "space-y-6" do |form| %>
+        <div>
+          <%= form.label :email, "Email address", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= form.email_field :email, 
+                                required: true, 
+                                autofocus: true,
+                                autocomplete: "email",
+                                class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <div>
+          <%= form.label :password, "Password", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= form.password_field :password, 
+                                   required: true,
+                                   autocomplete: "current-password",
+                                   class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <%= form.check_box :remember_me, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+            <%= form.label :remember_me, "Remember me", class: "ml-2 block text-sm text-gray-900" %>
+          </div>
+
+          <div class="text-sm">
+            <%= link_to "Forgot your password?", password_reset_path, class: "font-medium text-blue-600 hover:text-blue-500" %>
+          </div>
+        </div>
+
+        <div>
+          <%= form.submit "Sign in", 
+                         class: "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" %>
+        </div>
+      <% end %>
+
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300" />
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">New to Missionary Platform?</span>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <%= link_to sign_up_path, 
+                     class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" do %>
+            Create your account
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role Information -->
+    <div class="mt-8 bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Account Types</h3>
+      <div class="space-y-4">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <span class="text-blue-600 font-semibold text-sm">S</span>
+            </div>
+          </div>
+          <div class="ml-3">
+            <h4 class="text-sm font-medium text-gray-900">Supporter</h4>
+            <p class="text-sm text-gray-600">Follow missionaries, receive updates, and send messages of encouragement.</p>
+          </div>
+        </div>
+        
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <span class="text-green-600 font-semibold text-sm">M</span>
+            </div>
+          </div>
+          <div class="ml-3">
+            <h4 class="text-sm font-medium text-gray-900">Missionary</h4>
+            <p class="text-sm text-gray-600">Share your ministry journey, post updates, and connect with supporters.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

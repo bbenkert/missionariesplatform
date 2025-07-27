@@ -1,0 +1,196 @@
+<% content_for :title, @missionary.name %>
+
+<div class="bg-white">
+  <!-- Hero Section -->
+  <div class="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+    <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+        <!-- Avatar -->
+        <div class="flex-shrink-0">
+          <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center">
+            <% if @missionary.avatar.attached? %>
+              <%= image_tag @missionary.avatar, class: "w-32 h-32 rounded-full object-cover" %>
+            <% else %>
+              <span class="text-5xl text-white"><%= @missionary.name.first %></span>
+            <% end %>
+          </div>
+        </div>
+        
+        <!-- Info -->
+        <div class="flex-1 text-center md:text-left">
+          <h1 class="text-4xl font-bold mb-2"><%= @missionary.name %></h1>
+          <p class="text-xl text-blue-100 mb-2"><%= @missionary.missionary_profile.organization %></p>
+          <p class="text-lg text-blue-200">
+            📍 <%= @missionary.missionary_profile.city %>, <%= @missionary.missionary_profile.country %>
+          </p>
+          <p class="text-lg text-blue-200 mt-2">
+            🎯 <%= @missionary.missionary_profile.ministry_focus %>
+          </p>
+          
+          <!-- Follow Button -->
+          <div class="mt-6" id="follow_button">
+            <%= render 'follow_button', missionary: @missionary, is_following: @is_following %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Column -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- About Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">About <%= @missionary.name %></h2>
+          <div class="prose prose-lg text-gray-700">
+            <%= simple_format(@missionary.missionary_profile.bio) %>
+          </div>
+        </div>
+
+        <!-- Ministry Description -->
+        <% if @missionary.missionary_profile.ministry_description.present? %>
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Ministry Work</h2>
+            <div class="prose prose-lg text-gray-700">
+              <%= simple_format(@missionary.missionary_profile.ministry_description) %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Recent Updates -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Updates</h2>
+          
+          <% if @updates.any? %>
+            <div class="space-y-6">
+              <% @updates.each do |update| %>
+                <div class="border-b border-gray-200 pb-6 last:border-b-0 last:pb-0">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                   <%= update.update_type == 'prayer_request' ? 'bg-purple-100 text-purple-800' :
+                                       update.update_type == 'praise_report' ? 'bg-green-100 text-green-800' :
+                                       update.update_type == 'ministry_news' ? 'bg-blue-100 text-blue-800' :
+                                       'bg-gray-100 text-gray-800' %>">
+                        <%= update.update_type.humanize %>
+                      </span>
+                      <% if update.is_urgent? %>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          Urgent
+                        </span>
+                      <% end %>
+                    </div>
+                    <time class="text-sm text-gray-500">
+                      <%= time_ago_in_words(update.published_at) %> ago
+                    </time>
+                  </div>
+                  
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= update.title %></h3>
+                  <div class="prose text-gray-700">
+                    <%= truncate(strip_tags(update.content), length: 300) %>
+                  </div>
+                  
+                  <%= link_to "Read more", missionary_update_path(@missionary, update), 
+                             class: "inline-flex items-center mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+                </div>
+              <% end %>
+            </div>
+            
+            <div class="mt-8 text-center">
+              <%= link_to "View all updates", missionary_updates_path(@missionary), 
+                         class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100" %>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <div class="text-gray-400 text-4xl mb-4">📝</div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">No updates yet</h3>
+              <p class="text-gray-600"><%= @missionary.name %> hasn't posted any updates recently.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Prayer Requests -->
+        <% if @missionary.missionary_profile.prayer_requests.present? %>
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">🙏 Prayer Requests</h3>
+            <div class="prose prose-sm text-gray-700">
+              <%= simple_format(@missionary.missionary_profile.prayer_requests) %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Ministry Info -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold text-gray-900 mb-4">Ministry Information</h3>
+          <dl class="space-y-3">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Organization</dt>
+              <dd class="text-sm text-gray-900"><%= @missionary.missionary_profile.organization %></dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Ministry Focus</dt>
+              <dd class="text-sm text-gray-900"><%= @missionary.missionary_profile.ministry_focus %></dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Location</dt>
+              <dd class="text-sm text-gray-900">
+                <%= @missionary.missionary_profile.city %>, <%= @missionary.missionary_profile.country %>
+              </dd>
+            </div>
+            <% if @missionary.missionary_profile.started_ministry_at.present? %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Ministry Started</dt>
+                <dd class="text-sm text-gray-900">
+                  <%= @missionary.missionary_profile.started_ministry_at.strftime("%B %Y") %>
+                </dd>
+              </div>
+            <% end %>
+          </dl>
+        </div>
+
+        <!-- Contact -->
+        <% if user_signed_in? %>
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Connect</h3>
+            <div class="space-y-3">
+              <% if @can_message %>
+                <%= link_to "Send Message", new_conversation_path(recipient_id: @missionary.id), 
+                           class: "block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" %>
+              <% end %>
+              
+              <%= link_to "View All Updates", missionary_updates_path(@missionary), 
+                         class: "block w-full bg-gray-100 text-gray-700 text-center px-4 py-2 rounded-md hover:bg-gray-200 transition-colors" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="bg-blue-50 rounded-lg p-6 text-center">
+            <h3 class="text-lg font-semibold text-blue-900 mb-2">Connect with <%= @missionary.name %></h3>
+            <p class="text-blue-700 text-sm mb-4">Sign up to follow updates and send messages</p>
+            <%= link_to "Sign Up", sign_up_path, 
+                       class: "inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" %>
+          </div>
+        <% end %>
+
+        <!-- Stats -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold text-gray-900 mb-4">Impact</h3>
+          <div class="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <div class="text-2xl font-bold text-blue-600"><%= @missionary.supporter_users.count %></div>
+              <div class="text-sm text-gray-600">Followers</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-green-600"><%= @missionary.missionary_updates.published.count %></div>
+              <div class="text-sm text-gray-600">Updates</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

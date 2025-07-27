@@ -1,0 +1,94 @@
+<% content_for :title, "Missionaries" %>
+
+<div class="bg-white">
+  <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-gray-900 mb-8">Our Missionaries</h1>
+      <p class="text-xl text-gray-600 mb-12">Connect with missionaries serving around the world</p>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="mb-8 bg-gray-50 p-6 rounded-lg">
+      <%= form_with url: missionaries_path, method: :get, local: true, class: "space-y-4" do |form| %>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <%= form.text_field :search, value: params[:search], placeholder: "Search missionaries...", 
+                               class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+          </div>
+          <div>
+            <%= form.select :country, options_for_select([['All Countries', '']] + @countries.map { |c| [c, c] }, params[:country]),
+                           {}, { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+          </div>
+          <div>
+            <%= form.select :organization, options_for_select([['All Organizations', '']] + @organizations.map { |o| [o, o] }, params[:organization]),
+                           {}, { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+          </div>
+          <div>
+            <%= form.submit "Filter", class: "w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Missionaries Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+      <% @missionaries.each do |missionary| %>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mr-4">
+                <% if missionary.avatar.attached? %>
+                  <%= image_tag missionary.avatar, class: "w-16 h-16 rounded-full object-cover" %>
+                <% else %>
+                  <span class="text-2xl text-gray-600"><%= missionary.name.first %></span>
+                <% end %>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900"><%= missionary.name %></h3>
+                <p class="text-gray-600"><%= missionary.missionary_profile.organization %></p>
+              </div>
+            </div>
+            
+            <div class="space-y-2 mb-4">
+              <p class="text-sm text-gray-600">
+                <span class="font-medium">Location:</span> 
+                <%= missionary.missionary_profile.city %>, <%= missionary.missionary_profile.country %>
+              </p>
+              <p class="text-sm text-gray-600">
+                <span class="font-medium">Ministry:</span> 
+                <%= missionary.missionary_profile.ministry_focus %>
+              </p>
+            </div>
+            
+            <p class="text-gray-700 text-sm mb-4 line-clamp-3">
+              <%= truncate(missionary.missionary_profile.bio, length: 120) %>
+            </p>
+            
+            <div class="flex space-x-2">
+              <%= link_to "View Profile", missionary_path(missionary), 
+                         class: "flex-1 bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm" %>
+              <% if user_signed_in? && current_user.supporter? %>
+                <%= link_to "Follow", "#", 
+                           class: "flex-1 bg-gray-600 text-white text-center px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center">
+      <%= pagy_nav(@pagy) if @pagy.pages > 1 %>
+    </div>
+
+    <!-- Empty State -->
+    <% if @missionaries.empty? %>
+      <div class="text-center py-12">
+        <div class="text-gray-400 text-6xl mb-4">🌍</div>
+        <h3 class="text-2xl font-semibold text-gray-900 mb-2">No missionaries found</h3>
+        <p class="text-gray-600">Try adjusting your search or filter criteria.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

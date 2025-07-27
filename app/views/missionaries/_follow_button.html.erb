@@ -1,0 +1,21 @@
+<% if user_signed_in? && current_user.supporter? %>
+  <% if is_following %>
+    <%= button_to "Following ✓", unfollow_missionary_path(missionary), 
+                  method: :delete,
+                  class: "bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium",
+                  confirm: "Are you sure you want to unfollow #{missionary.name}?",
+                  data: { turbo: true } %>
+  <% else %>
+    <%= button_to "Follow", follow_missionary_path(missionary), 
+                  method: :post,
+                  class: "bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium",
+                  data: { turbo: true } %>
+  <% end %>
+<% elsif user_signed_in? %>
+  <span class="inline-block bg-gray-400 text-white px-6 py-3 rounded-lg font-medium cursor-not-allowed">
+    Only supporters can follow
+  </span>
+<% else %>
+  <%= link_to "Sign in to Follow", sign_in_path, 
+             class: "bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium inline-block" %>
+<% end %>
