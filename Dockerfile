@@ -1,5 +1,5 @@
-# Use the official Ruby 3.3 image
-FROM ruby:3.3.0
+# Use the official Ruby 3.4.5 image
+FROM ruby:3.4.5
 
 # Install system dependencies
 RUN apt-get update -qq && \
