@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_024940) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_024958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -129,6 +129,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_024940) do
     t.index ["safety_options"], name: "index_missionary_profiles_on_safety_options", using: :gin
     t.index ["sensitive_flag"], name: "index_missionary_profiles_on_sensitive_flag"
     t.index ["slug"], name: "index_missionary_profiles_on_slug", unique: true
+    t.index ["slug"], name: "index_missionary_profiles_on_slug_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["user_id"], name: "index_missionary_profiles_on_user_id", unique: true
   end
 
@@ -163,8 +164,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_024940) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_organizations_on_name"
+    t.index ["name"], name: "index_organizations_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["settings"], name: "index_organizations_on_settings", using: :gin
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
+    t.index ["slug"], name: "index_organizations_on_slug_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "prayer_actions", force: :cascade do |t|
