@@ -28,7 +28,7 @@ class DashboardController < ApplicationController
                                      .limit(10)
     
     # Get latest prayer requests from followed missionaries
-    @latest_prayer_requests = PrayerRequest.includes(:missionary_profile, :user)
+    @latest_prayer_requests = PrayerRequest.includes(missionary_profile: :user)
                                           .where(missionary_profile_id: @followed_missionary_profiles.pluck(:id))
                                           .order(created_at: :desc)
                                           .limit(8)

@@ -201,26 +201,26 @@
                 <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
                   <div class="flex items-start space-x-3">
                     <div class="flex-shrink-0">
-                      <% if prayer_request.user.avatar.attached? %>
-                        <%= image_tag prayer_request.user.avatar, class: "h-8 w-8 rounded-full object-cover" %>
+                      <% if prayer_request.missionary_profile.user.avatar.attached? %>
+                        <%= image_tag prayer_request.missionary_profile.user.avatar, class: "h-8 w-8 rounded-full object-cover" %>
                       <% else %>
                         <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
                           <span class="text-xs font-medium text-purple-600">
-                            <%= prayer_request.user.name.first %>
+                            <%= prayer_request.missionary_profile.user.name.first %>
                           </span>
                         </div>
                       <% end %>
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-medium text-gray-900">
-                        <%= prayer_request.user.name %>
+                        <%= prayer_request.missionary_profile.user.name %>
                       </p>
                       <p class="text-sm text-gray-600 mt-1">
                         <%= truncate(prayer_request.title, length: 60) %>
                       </p>
                       <div class="mt-2 flex items-center justify-between">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          <%= prayer_request.category.humanize if prayer_request.category %>
+                          <%= prayer_request.urgency.humanize %> urgency
                         </span>
                         <div class="flex items-center space-x-2">
                           <%= form_with url: pray_prayer_request_path(prayer_request), method: :post, local: false, 
