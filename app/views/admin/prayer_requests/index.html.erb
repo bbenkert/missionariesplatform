@@ -1,0 +1,374 @@
+<% content_for :title, "Admin - Prayer Requests" %>
+
+<div class="admin-header bg-white shadow mb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Prayer Requests Management</h1>
+          <p class="mt-1 text-sm text-gray-500">
+            Monitor and moderate prayer requests across the platform
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Requests</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_count %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Open</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @open_count %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Answered</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @answered_count %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Closed</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @closed_count %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-red-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Urgent</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @urgent_count %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white shadow rounded-lg mb-8">
+    <div class="px-6 py-4">
+      <%= form_with url: admin_prayer_requests_path, method: :get, class: "flex flex-wrap gap-4", local: true do |form| %>
+        <div class="flex-1 min-w-0">
+          <%= form.text_field :search, 
+              placeholder: "Search prayer requests...", 
+              value: params[:search],
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+        
+        <div class="flex-shrink-0">
+          <%= form.select :status, 
+              options_for_select([
+                ['All Statuses', 'all'],
+                ['Open', 'open'],
+                ['Answered', 'answered'],
+                ['Closed', 'closed']
+              ], params[:status] || 'all'),
+              {},
+              { class: "px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+        
+        <div class="flex-shrink-0">
+          <%= form.select :urgency, 
+              options_for_select([
+                ['All Urgency Levels', 'all'],
+                ['Low', 'low'],
+                ['Medium', 'medium'], 
+                ['High', 'high']
+              ], params[:urgency] || 'all'),
+              {},
+              { class: "px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+        
+        <div class="flex-shrink-0">
+          <%= form.select :organization_id, 
+              options_for_select([['All Organizations', 'all']] + @organizations.map { |org| [org.name, org.id] }, params[:organization_id] || 'all'),
+              {},
+              { class: "px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+        
+        <div class="flex-shrink-0">
+          <%= form.submit "Filter", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        </div>
+        
+        <% if params[:search].present? || params[:status] != 'all' || params[:urgency] != 'all' || params[:organization_id] != 'all' %>
+          <div class="flex-shrink-0">
+            <%= link_to "Clear", admin_prayer_requests_path, class: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Bulk Actions -->
+  <%= form_with url: bulk_update_admin_prayer_requests_path, method: :patch, id: "bulk-form", class: "hidden", local: true do |form| %>
+    <%= form.hidden_field :bulk_action, id: "bulk-action" %>
+    <div id="selected-ids"></div>
+  <% end %>
+
+  <!-- Prayer Requests Table -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 sm:px-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+          Prayer Requests (<%= @prayer_requests.count %>)
+        </h3>
+        <div class="flex space-x-2">
+          <button onclick="selectBulkAction('mark_answered')" 
+                  class="hidden bulk-actions bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+            Mark Answered
+          </button>
+          <button onclick="selectBulkAction('close')" 
+                  class="hidden bulk-actions bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm">
+            Close
+          </button>
+          <button onclick="selectBulkAction('reopen')" 
+                  class="hidden bulk-actions bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+            Reopen
+          </button>
+          <button onclick="selectBulkAction('delete')" 
+                  class="hidden bulk-actions bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ul class="divide-y divide-gray-200">
+      <% @prayer_requests.each do |prayer_request| %>
+        <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input type="checkbox" 
+                     value="<%= prayer_request.id %>" 
+                     class="prayer-request-checkbox mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                     onchange="toggleBulkActions()">
+              
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-2 mb-1">
+                      <h4 class="text-sm font-medium text-blue-600 hover:text-blue-800">
+                        <%= link_to prayer_request.title, admin_prayer_request_path(prayer_request) %>
+                      </h4>
+                      
+                      <!-- Status Badge -->
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                   <%= case prayer_request.status
+                                       when 'open' then 'bg-green-100 text-green-800'
+                                       when 'answered' then 'bg-blue-100 text-blue-800'
+                                       when 'closed' then 'bg-gray-100 text-gray-800'
+                                       end %>">
+                        <%= prayer_request.status.humanize %>
+                      </span>
+                      
+                      <!-- Urgency Badge -->
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                   <%= case prayer_request.urgency
+                                       when 'high' then 'bg-red-100 text-red-800'
+                                       when 'medium' then 'bg-yellow-100 text-yellow-800'
+                                       else 'bg-green-100 text-green-800'
+                                       end %>">
+                        <%= prayer_request.urgency.humanize %> Priority
+                      </span>
+                    </div>
+                    
+                    <div class="flex items-center text-sm text-gray-500 space-x-4">
+                      <span class="flex items-center">
+                        <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                        </svg>
+                        <%= prayer_request.missionary_profile.user.name %>
+                      </span>
+                      
+                      <% if prayer_request.missionary_profile.user.organization %>
+                        <span class="flex items-center">
+                          <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 2H4v8h12V6z" clip-rule="evenodd"></path>
+                          </svg>
+                          <%= prayer_request.missionary_profile.user.organization.name %>
+                        </span>
+                      <% end %>
+                      
+                      <span class="flex items-center">
+                        <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        </svg>
+                        <%= time_ago_in_words(prayer_request.created_at) %> ago
+                      </span>
+                      
+                      <span class="flex items-center">
+                        <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <%= pluralize(prayer_request.prayer_count, 'prayer') %>
+                      </span>
+                    </div>
+                    
+                    <% if prayer_request.tags.present? %>
+                      <div class="flex flex-wrap gap-1 mt-2">
+                        <% prayer_request.tags.first(3).each do |tag| %>
+                          <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                            <%= tag %>
+                          </span>
+                        <% end %>
+                        <% if prayer_request.tags.count > 3 %>
+                          <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                            +<%= prayer_request.tags.count - 3 %> more
+                          </span>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                  
+                  <div class="flex items-center space-x-2">
+                    <%= link_to "View", admin_prayer_request_path(prayer_request), 
+                        class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+                    <%= link_to "Delete", admin_prayer_request_path(prayer_request), 
+                        method: :delete,
+                        data: { confirm: "Are you sure you want to delete this prayer request?" },
+                        class: "text-red-600 hover:text-red-800 text-sm font-medium" %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if @prayer_requests.empty? %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No prayer requests found</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          <% if params[:search].present? || params[:status] != 'all' || params[:urgency] != 'all' %>
+            Try adjusting your filter criteria.
+          <% else %>
+            Prayer requests will appear here once missionaries start sharing them.
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function toggleBulkActions() {
+  const checkboxes = document.querySelectorAll('.prayer-request-checkbox:checked');
+  const bulkActions = document.querySelectorAll('.bulk-actions');
+  
+  if (checkboxes.length > 0) {
+    bulkActions.forEach(action => action.classList.remove('hidden'));
+  } else {
+    bulkActions.forEach(action => action.classList.add('hidden'));
+  }
+}
+
+function selectBulkAction(action) {
+  const checkboxes = document.querySelectorAll('.prayer-request-checkbox:checked');
+  
+  if (checkboxes.length === 0) {
+    alert('Please select at least one prayer request.');
+    return;
+  }
+  
+  if (action === 'delete' && !confirm(`Are you sure you want to delete ${checkboxes.length} prayer request(s)?`)) {
+    return;
+  }
+  
+  // Set the bulk action
+  document.getElementById('bulk-action').value = action;
+  
+  // Add selected IDs to form
+  const selectedIdsContainer = document.getElementById('selected-ids');
+  selectedIdsContainer.innerHTML = '';
+  
+  checkboxes.forEach(checkbox => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'prayer_request_ids[]';
+    input.value = checkbox.value;
+    selectedIdsContainer.appendChild(input);
+  });
+  
+  // Submit form
+  document.getElementById('bulk-form').submit();
+}
+</script>

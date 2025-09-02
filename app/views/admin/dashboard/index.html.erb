@@ -1,0 +1,306 @@
+<% content_for :title, "Admin Dashboard" %>
+
+<div class="admin-header bg-white shadow mb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p class="mt-1 text-sm text-gray-500">
+            Overview of platform activity and management tools
+          </p>
+        </div>
+        
+        <div class="flex space-x-4">
+          <%= link_to "View Site", root_path, 
+              target: "_blank",
+              class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Users Stats -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_users %></dd>
+            </dl>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between text-sm text-gray-600">
+            <span>Missionaries: <%= @total_missionaries %></span>
+            <span>Supporters: <%= @total_supporters %></span>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-5 py-3">
+        <%= link_to "Manage Users", admin_users_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    </div>
+
+    <!-- Missionaries Stats -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Missionaries</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @approved_missionaries %></dd>
+            </dl>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="text-sm text-gray-600">
+            Pending: <%= @pending_missionaries %>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-5 py-3">
+        <%= link_to "Manage Missionaries", admin_missionaries_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    </div>
+
+    <!-- Prayer Requests Stats -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-purple-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Prayer Requests</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_prayer_requests %></dd>
+            </dl>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between text-sm text-gray-600">
+            <span>Open: <%= @open_prayer_requests %></span>
+            <span>Urgent: <%= @urgent_prayer_requests %></span>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-5 py-3">
+        <%= link_to "Manage Prayer Requests", admin_prayer_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    </div>
+
+    <!-- Prayer Actions Stats -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-yellow-100 rounded-md flex items-center justify-center">
+              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Prayers</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_prayer_actions %></dd>
+            </dl>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="text-sm text-gray-600">
+            Organizations: <%= @total_organizations %>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-5 py-3">
+        <%= link_to "View Organizations", "#", class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Management Sections -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Recent Prayer Requests -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900">Recent Prayer Requests</h3>
+          <%= link_to "View All", admin_prayer_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+        </div>
+      </div>
+      <div class="px-6 py-4">
+        <% if @recent_prayer_requests.any? %>
+          <div class="space-y-3">
+            <% @recent_prayer_requests.each do |prayer_request| %>
+              <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center space-x-2">
+                    <%= link_to truncate(prayer_request.title, length: 40), admin_prayer_request_path(prayer_request), 
+                        class: "text-sm font-medium text-blue-600 hover:text-blue-800" %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                 <%= case prayer_request.urgency
+                                     when 'high' then 'bg-red-100 text-red-800'
+                                     when 'medium' then 'bg-yellow-100 text-yellow-800'
+                                     else 'bg-green-100 text-green-800'
+                                     end %>">
+                      <%= prayer_request.urgency.humanize %>
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">
+                    by <%= prayer_request.missionary_profile.user.name %> • 
+                    <%= time_ago_in_words(prayer_request.created_at) %> ago •
+                    <%= pluralize(prayer_request.prayer_count, 'prayer') %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-sm text-gray-500">No prayer requests yet</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Most Prayed For Requests -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Most Prayed For Requests</h3>
+      </div>
+      <div class="px-6 py-4">
+        <% if @most_prayed_requests.any? %>
+          <div class="space-y-3">
+            <% @most_prayed_requests.each do |prayer_request| %>
+              <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <%= link_to truncate(prayer_request.title, length: 40), admin_prayer_request_path(prayer_request), 
+                        class: "text-sm font-medium text-blue-600 hover:text-blue-800" %>
+                    <span class="text-sm font-medium text-gray-900">
+                      <%= pluralize(prayer_request.prayer_count, 'prayer') %>
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">
+                    by <%= prayer_request.missionary_profile.user.name %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-sm text-gray-500">No prayer requests yet</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Users -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900">Recent Users</h3>
+          <%= link_to "View All", admin_users_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+        </div>
+      </div>
+      <div class="px-6 py-4">
+        <div class="space-y-3">
+          <% @recent_users.each do |user| %>
+            <div class="flex items-center space-x-3">
+              <img class="h-8 w-8 rounded-full" 
+                   src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(user.name) %>&background=3B82F6&color=FFFFFF" 
+                   alt="<%= user.name %>">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-medium text-gray-900 truncate">
+                    <%= user.name %>
+                  </p>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                               <%= case user.role
+                                   when 'admin' then 'bg-red-100 text-red-800'
+                                   when 'missionary' then 'bg-blue-100 text-blue-800'
+                                   else 'bg-green-100 text-green-800'
+                                   end %>">
+                    <%= user.role.humanize %>
+                  </span>
+                </div>
+                <p class="text-xs text-gray-500">
+                  <%= user.email %> • <%= time_ago_in_words(user.created_at) %> ago
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Follows -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Recent Follows</h3>
+      </div>
+      <div class="px-6 py-4">
+        <% if @recent_follows.any? %>
+          <div class="space-y-3">
+            <% @recent_follows.each do |follow| %>
+              <div class="flex items-center space-x-3">
+                <img class="h-6 w-6 rounded-full" 
+                     src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(follow.user.name) %>&background=3B82F6&color=FFFFFF" 
+                     alt="<%= follow.user.name %>">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm text-gray-900">
+                    <span class="font-medium"><%= follow.user.name %></span>
+                    started following
+                    <span class="font-medium">
+                      <% if follow.followable_type == 'MissionaryProfile' %>
+                        <%= follow.followable.user.name %>
+                      <% else %>
+                        <%= follow.followable.name %>
+                      <% end %>
+                    </span>
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    <%= time_ago_in_words(follow.created_at) %> ago
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-sm text-gray-500">No follows yet</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

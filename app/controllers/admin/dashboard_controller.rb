@@ -2,13 +2,35 @@ class Admin::DashboardController < ApplicationController
   before_action :require_admin
 
   def index
+    # User statistics
     @total_users = User.count
-    @total_missionaries = User.missionaries.count
-    @approved_missionaries = User.approved_missionaries.count
-    @pending_missionaries = User.missionaries.where(status: :pending).count
-    @total_supporters = User.supporters.count
-    @recent_users = User.order(created_at: :desc).limit(10)
-    @recent_updates = MissionaryUpdate.published.recent.limit(10)
+    @total_missionaries = User.where(role: :missionary).count
+    @total_supporters = User.where(role: :supporter).count
+    @approved_missionaries = MissionaryProfile.where(status: :approved).count
+    @pending_missionaries = MissionaryProfile.where(status: :pending).count
+    @recent_users = User.order(created_at: :desc).limit(5)
+    
+    # Prayer request statistics
+    @total_prayer_requests = PrayerRequest.count
+    @open_prayer_requests = PrayerRequest.where(status: :open).count
+    @urgent_prayer_requests = PrayerRequest.where(urgency: :high).count
+    @total_prayer_actions = PrayerAction.count
+    @recent_prayer_requests = PrayerRequest.includes(missionary_profile: :user)
+                                           .order(created_at: :desc)
+                                           .limit(5)
+    @most_prayed_requests = PrayerRequest.includes(missionary_profile: :user)
+                                         .joins(:prayer_actions)
+                                         .group('prayer_requests.id')
+                                         .order('COUNT(prayer_actions.id) DESC')
+                                         .limit(5)
+    
+    # Organization statistics
+    @total_organizations = Organization.count
+    @recent_organizations = Organization.order(created_at: :desc).limit(5)
+    
+    # Follow statistics  
+    @total_follows = Follow.count
+    @recent_follows = Follow.includes(:user, :followable).order(created_at: :desc).limit(5)
   end
 
   private

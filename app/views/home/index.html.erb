@@ -16,7 +16,7 @@
             class: "bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors" do %>
           Discover Missionaries
         <% end %>
-        <%= link_to sign_up_path, 
+        <%= link_to new_user_registration_path, 
             class: "border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors" do %>
           Join Our Community
         <% end %>
@@ -202,11 +202,11 @@
       and the communities they serve. Your encouragement matters more than you know.
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <%= link_to sign_up_path + "?role=supporter", 
+      <%= link_to new_user_registration_path + "?role=supporter", 
           class: "bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors" do %>
         Join as Supporter
       <% end %>
-      <%= link_to sign_up_path + "?role=missionary", 
+      <%= link_to new_user_registration_path + "?role=missionary", 
           class: "border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors" do %>
         Register as Missionary
       <% end %>

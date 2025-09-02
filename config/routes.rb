@@ -20,6 +20,11 @@ Rails.application.routes.draw do
     end
     resources :users, only: [:index, :show, :update]
     resources :messages, only: [:index, :show, :destroy]
+    resources :prayer_requests, only: [:index, :show, :update, :destroy] do
+      collection do
+        patch :bulk_update
+      end
+    end
   end
 
   # Missionary routes
