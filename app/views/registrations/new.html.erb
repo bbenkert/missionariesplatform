@@ -1,35 +1,101 @@
 <% content_for :title, "Sign Up" %>
 
-<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <div class="text-center">
-      <%= link_to root_path, class: "text-3xl font-bold text-blue-600" do %>
-        Missionary Platform
-      <% end %>
+<div class="min-h-screen flex">
+  <!-- Left side - Modern design with gradient -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-800 relative overflow-hidden">
+    <!-- Background pattern -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle at 20% 80%, white 1px, transparent 1px); background-size: 60px 60px;"></div>
     </div>
-    <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
-      Create your account
-    </h2>
-    <p class="mt-2 text-center text-sm text-gray-600">
-      Already have an account?
-      <%= link_to "Sign in here", new_user_session_path, class: "font-medium text-blue-600 hover:text-blue-500" %>
-    </p>
+    
+    <!-- Content -->
+    <div class="relative z-10 flex flex-col justify-center px-12">
+      <div class="max-w-md">
+        <h1 class="text-4xl font-bold text-white mb-6">
+          Join the Global Mission
+        </h1>
+        <p class="text-xl text-purple-100 mb-8">
+          Whether you're a missionary sharing your journey or a supporter looking to make a difference, you're in the right place.
+        </p>
+        
+        <!-- Account type benefits -->
+        <div class="space-y-6">
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <div class="flex items-center mb-3">
+              <div class="w-3 h-3 bg-green-300 rounded-full mr-3"></div>
+              <span class="text-white font-semibold">Supporter Account</span>
+            </div>
+            <ul class="text-purple-100 space-y-2 text-sm">
+              <li>• Follow missionaries worldwide</li>
+              <li>• Receive ministry updates</li>
+              <li>• Participate in prayer communities</li>
+              <li>• Instant access upon registration</li>
+            </ul>
+          </div>
+          
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <div class="flex items-center mb-3">
+              <div class="w-3 h-3 bg-blue-300 rounded-full mr-3"></div>
+              <span class="text-white font-semibold">Missionary Account</span>
+            </div>
+            <ul class="text-purple-100 space-y-2 text-sm">
+              <li>• Share ministry updates</li>
+              <li>• Connect with supporters</li>
+              <li>• Request prayer support</li>
+              <li>• Requires admin approval for security</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Trust indicator -->
+        <div class="mt-8 flex items-center text-purple-100">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm">Trusted by thousands of missionaries worldwide</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-    <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-      <%= form_with model: @user, url: user_registration_path, local: true, class: "space-y-6" do |form| %>
-        
-        <!-- Display errors if any -->
-        <% if @user.errors.any? %>
-          <div class="bg-red-50 border border-red-200 rounded-md p-4">
-            <div class="flex">
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">
-                  <%= pluralize(@user.errors.count, "error") %> prohibited this account from being saved:
-                </h3>
-                <div class="mt-2 text-sm text-red-700">
-                  <ul class="list-disc pl-5 space-y-1">
+  <!-- Right side - Registration form -->
+  <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">
+    <div class="mx-auto w-full max-w-sm">
+      <div class="text-center mb-8">
+        <%= link_to root_path, class: "inline-flex items-center" do %>
+          <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center mr-3">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9c0 5-4 9-9 9m0 0a9 9 0 01-9-9m9 9c0-5 4-9 9-9m0 0a9 9 0 019 9"></path>
+            </svg>
+          </div>
+          <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Missionary Platform
+          </span>
+        <% end %>
+      </div>
+      
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-2">Create your account</h2>
+        <p class="text-gray-600 text-center mb-8">
+          Join our global mission community
+        </p>
+      </div>
+      <!-- Registration Form -->
+      <div class="bg-white py-8 px-8 shadow-xl rounded-2xl border border-gray-100">
+        <%= form_with model: @user, url: user_registration_path, local: true, class: "space-y-6" do |form| %>
+          
+          <!-- Display errors if any -->
+          <% if @user.errors.any? %>
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl relative" role="alert">
+              <div class="flex items-start">
+                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <div>
+                  <h3 class="font-semibold mb-1">
+                    <%= pluralize(@user.errors.count, "error") %> prevented registration:
+                  </h3>
+                  <ul class="list-disc pl-5 space-y-1 text-sm">
                     <% @user.errors.full_messages.each do |message| %>
                       <li><%= message %></li>
                     <% end %>
@@ -37,138 +103,210 @@
                 </div>
               </div>
             </div>
-          </div>
-        <% end %>
+          <% end %>
 
-        <div>
-          <%= form.label :name, "Full Name", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
+          <div>
+            <%= form.label :name, "Full Name", class: "block text-sm font-semibold text-gray-700 mb-2" %>
             <%= form.text_field :name, 
                                required: true, 
                                autofocus: true,
                                autocomplete: "name",
-                               class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+                               class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200",
+                               placeholder: "Enter your full name" %>
           </div>
-        </div>
 
-        <div>
-          <%= form.label :email, "Email address", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
+          <div>
+            <%= form.label :email, "Email address", class: "block text-sm font-semibold text-gray-700 mb-2" %>
             <%= form.email_field :email, 
                                 required: true,
                                 autocomplete: "email",
-                                class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+                                class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200",
+                                placeholder: "Enter your email address" %>
           </div>
-        </div>
 
-        <div>
-          <%= form.label :role, "Account Type", class: "block text-sm font-medium text-gray-700 mb-3" %>
-          <div class="space-y-3">
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
+          <div>
+            <%= form.label :role, "Account Type", class: "block text-sm font-semibold text-gray-700 mb-4" %>
+            <div class="space-y-4">
+              <!-- Supporter Option -->
+              <label class="relative flex items-start p-4 border border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition-all duration-200 cursor-pointer">
                 <%= form.radio_button :role, 'supporter', 
-                                     class: "h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500", 
+                                     class: "sr-only", 
                                      required: true %>
-              </div>
-              <div class="ml-3">
-                <%= form.label :role_supporter, class: "block text-sm font-medium text-gray-900" do %>
-                  Supporter
-                <% end %>
-                <p class="text-sm text-gray-600">Follow missionaries, receive updates, and provide prayer and financial support to ministries around the world.</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
+                <div class="flex items-center h-5">
+                  <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full mr-4 flex items-center justify-center">
+                    <div class="w-2 h-2 bg-green-500 rounded-full hidden"></div>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center">
+                    <span class="block text-sm font-semibold text-gray-900">Supporter Account</span>
+                    <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Instant Access
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">
+                    Follow missionaries, receive updates, and join prayer communities worldwide.
+                  </p>
+                </div>
+              </label>
+              
+              <!-- Missionary Option -->
+              <label class="relative flex items-start p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 cursor-pointer">
                 <%= form.radio_button :role, 'missionary', 
-                                     class: "h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500", 
+                                     class: "sr-only", 
                                      required: true %>
+                <div class="flex items-center h-5">
+                  <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full mr-4 flex items-center justify-center">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full hidden"></div>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center">
+                    <span class="block text-sm font-semibold text-gray-900">Missionary Account</span>
+                    <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Approval Required
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">
+                    Share ministry updates, prayer requests, and connect with supporters globally.
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <%= form.label :password, "Password", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+              <%= form.password_field :password, 
+                                     required: true,
+                                     autocomplete: "new-password",
+                                     class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200",
+                                     placeholder: "Create password" %>
+              <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+            </div>
+
+            <div>
+              <%= form.label :password_confirmation, "Confirm Password", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+              <%= form.password_field :password_confirmation, 
+                                     required: true,
+                                     autocomplete: "new-password",
+                                     class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200",
+                                     placeholder: "Confirm password" %>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <%= form.check_box :terms_accepted, 
+                              { required: true },
+                              { class: "h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded mt-1" } %>
+            <%= form.label :terms_accepted, class: "ml-3 block text-sm text-gray-700" do %>
+              I agree to the 
+              <%= link_to "Terms of Service", "#", class: "text-purple-600 hover:text-purple-500 font-medium transition-colors duration-200" %> 
+              and 
+              <%= link_to "Privacy Policy", "#", class: "text-purple-600 hover:text-purple-500 font-medium transition-colors duration-200" %>
+            <% end %>
+          </div>
+
+          <div>
+            <%= form.submit "Create Account", 
+                           class: "group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]" %>
+          </div>
+
+          <div class="mt-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300" />
               </div>
-              <div class="ml-3">
-                <%= form.label :role_missionary, class: "block text-sm font-medium text-gray-900" do %>
-                  Missionary
-                <% end %>
-                <p class="text-sm text-gray-600">Share ministry updates, prayer requests, and connect with supporters. <span class="font-medium text-blue-600">Requires approval.</span></p>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">Already have an account?</span>
               </div>
+            </div>
+
+            <div class="mt-6">
+              <%= link_to new_user_session_path, 
+                  class: "w-full flex justify-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 hover:scale-[1.01]" do %>
+                Sign in to your account
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Account Type Information -->
+      <div class="mt-8 space-y-4">
+        <!-- Quick approval info -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-semibold text-green-800">Supporter Accounts</h3>
+              <p class="mt-1 text-sm text-green-700">
+                Get instant access to follow missionaries, receive updates, and join global prayer communities.
+              </p>
             </div>
           </div>
         </div>
 
-        <div>
-          <%= form.label :password, "Password", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.password_field :password, 
-                                   required: true,
-                                   autocomplete: "new-password",
-                                   class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-          </div>
-          <p class="mt-1 text-xs text-gray-600">Must be at least 8 characters long.</p>
-        </div>
-
-        <div>
-          <%= form.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.password_field :password_confirmation, 
-                                   required: true,
-                                   autocomplete: "new-password",
-                                   class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
-          </div>
-        </div>
-
-        <div class="flex items-center">
-          <%= form.check_box :terms_accepted, 
-                            { required: true },
-                            { class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" } %>
-          <%= form.label :terms_accepted, class: "ml-2 block text-sm text-gray-900" do %>
-            I agree to the 
-            <%= link_to "Terms of Service", "#", class: "text-blue-600 hover:text-blue-500" %> 
-            and 
-            <%= link_to "Privacy Policy", "#", class: "text-blue-600 hover:text-blue-500" %>
-          <% end %>
-        </div>
-
-        <div>
-          <%= form.submit "Create Account", 
-                         class: "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" %>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- Information about account types and approval process -->
-    <div class="mt-8 space-y-4">
-      <!-- Supporter info -->
-      <div class="bg-green-50 rounded-lg p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="ml-3">
-            <h3 class="text-sm font-medium text-green-800">Supporter Accounts</h3>
-            <div class="mt-1 text-sm text-green-700">
-              <p>Instant access to follow missionaries, receive updates, and connect with ministries worldwide.</p>
+        <!-- Approval required info -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-semibold text-blue-800">Missionary Accounts</h3>
+              <p class="mt-1 text-sm text-blue-700">
+                Requires admin approval for platform security. You'll receive email notification once approved and can then create your ministry profile.
+              </p>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Missionary info -->
-      <div class="bg-blue-50 rounded-lg p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="ml-3">
-            <h3 class="text-sm font-medium text-blue-800">Missionary Accounts</h3>
-            <div class="mt-1 text-sm text-blue-700">
-              <p>Requires admin approval to ensure platform safety and authenticity. You'll receive an email notification once approved and can then create your ministry profile.</p>
-            </div>
-          </div>
-        </div>
+      
+      <!-- Terms note -->
+      <div class="mt-8 text-center">
+        <p class="text-xs text-gray-500">
+          By creating an account, you're joining a trusted community of missionaries and supporters dedicated to global ministry impact.
+        </p>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+/* Custom radio button styling */
+input[type="radio"]:checked + .radio-custom {
+  border-color: #10b981;
+}
+
+input[type="radio"]:checked + .radio-custom .bg-green-500 {
+  display: block;
+}
+
+input[type="radio"][value="missionary"]:checked + .radio-custom {
+  border-color: #3b82f6;
+}
+
+input[type="radio"][value="missionary"]:checked + .radio-custom .bg-blue-500 {
+  display: block;
+}
+
+input[type="radio"]:checked + .radio-custom .bg-green-500 {
+  display: none;
+}
+
+input[type="radio"][value="supporter"]:checked + .radio-custom .bg-green-500 {
+  display: block;
+}
+
+input[type="radio"][value="supporter"]:checked + .radio-custom .bg-blue-500 {
+  display: none;
+}
+</style>
