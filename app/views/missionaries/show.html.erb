@@ -126,11 +126,22 @@
       <!-- Sidebar -->
       <div class="space-y-6">
         <!-- Prayer Requests -->
-        <% if @missionary.missionary_profile.prayer_requests.present? %>
+        <% if @prayer_requests.any? %>
           <div class="bg-white rounded-lg shadow-lg p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">🙏 Prayer Requests</h3>
-            <div class="prose prose-sm text-gray-700">
-              <%= simple_format(@missionary.missionary_profile.prayer_requests) %>
+            <div class="space-y-4">
+              <% @prayer_requests.each do |pr| %>
+                <div class="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+                  <h4 class="text-md font-semibold text-gray-900 mb-1"><%= pr.title %></h4>
+                  <p class="text-gray-700 text-sm mb-2"><%= truncate(pr.body, length: 100) %></p>
+                  <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span><%= time_ago_in_words(pr.published_at) %> ago</span>
+                    <span class="inline-block px-2 py-1 rounded-full text-xs font-medium bg-<%= pr.urgency_color %>-100 text-<%= pr.urgency_color %>-800">
+                      <%= pr.urgency.humanize %>
+                    </span>
+                  </div>
+                </div>
+              <% end %>
             </div>
           </div>
         <% end %>

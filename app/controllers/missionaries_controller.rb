@@ -3,14 +3,15 @@ class MissionariesController < ApplicationController
 
   def index
     @missionaries = User.approved_missionaries
-                       .includes(:missionary_profile, avatar_attachment: :blob)
+                       .includes(:missionary_profile, :organization, avatar_attachment: :blob) # Added :organization to includes
                        .joins(:missionary_profile)
 
     # Filtering
     @missionaries = @missionaries.joins(:missionary_profile)
                                 .where(missionary_profiles: { country: params[:country] }) if params[:country].present?
-    @missionaries = @missionaries.joins(:missionary_profile)
-                                .where(missionary_profiles: { organization: params[:organization] }) if params[:organization].present?
+    # Updated organization filtering to use organization_id
+    @missionaries = @missionaries.joins(:organization)
+                                .where(organizations: { name: params[:organization] }) if params[:organization].present?
     @missionaries = @missionaries.joins(:missionary_profile)
                                 .where(missionary_profiles: { ministry_focus: params[:ministry_focus] }) if params[:ministry_focus].present?
 
@@ -33,11 +34,11 @@ class MissionariesController < ApplicationController
       @missionaries = @missionaries.left_joins(:organization) # Ensure organization is joined for search
                                   .where(fts_query + ' OR ' + trigram_query, search: search_term)
                                   .order(Arel.sql(ActiveRecord::Base.sanitize_sql_array([
-        "ts_rank(to_tsvector('simple', users.name || ' ' || missionary_profiles.bio || ' ' || missionary_profiles.ministry_focus), plainto_tsquery('simple', ?)) DESC, \
-        similarity(users.name, ?) DESC, \
-        similarity(missionary_profiles.bio, ?) DESC",
-        search_term, search_term, search_term
-      ])))
+                                    "ts_rank(to_tsvector('simple', users.name || ' ' || missionary_profiles.bio || ' ' || missionary_profiles.ministry_focus), plainto_tsquery('simple', ?)) DESC, \
+                                    similarity(users.name, ?) DESC, \
+                                    similarity(missionary_profiles.bio, ?) DESC",
+                                    search_term, search_term, search_term
+                                  ])))
     end
 
     @pagy, @missionaries = pagy(@missionaries, items: 12)
@@ -49,17 +50,19 @@ class MissionariesController < ApplicationController
                                  .pluck(:country)
                                  .compact
                                  .sort
-    @organizations = MissionaryProfile.joins(:user)
-                                    .where(users: { status: 'approved' })
-                                    .distinct
-                                    .pluck(:organization)
-                                    .compact
-                                    .sort
+    # Updated organizations filter to pluck from Organization model
+    @organizations = Organization.joins(missionary_profiles: :user)
+                                 .where(users: { status: 'approved' })
+                                 .distinct
+                                 .pluck(:name)
+                                 .compact
+                                 .sort
   end
 
   def show
     @missionary = User.approved_missionaries.includes(:missionary_profile, :missionary_updates).find(params[:id])
-    @updates = @missionary.missionary_updates.published.recent.limit(10)
+    @updates = @missionary.missionary_updates.published.visible_to(current_user).recent.limit(10)
+    @prayer_requests = @missionary.missionary_profile.prayer_requests.published.visible_to(current_user).recent.limit(5)
     @is_following = current_user&.supporter_followings&.exists?(missionary: @missionary)
     @can_message = current_user&.can_message?(@missionary)
   rescue ActiveRecord::RecordNotFound

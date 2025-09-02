@@ -9,20 +9,20 @@ RSpec.describe 'Missionary Search and Filter', type: :system do
 
     # Create approved missionaries with diverse data
     @missionary1 = create(:user, :missionary, :approved, name: 'John Doe', email: 'john.doe@example.com', organization: @org1)
-    create(:missionary_profile, user: @missionary1, bio: 'Serving in Africa, focusing on education.', country: 'Kenya', ministry_focus: 'Education', organization: @org1.name, slug: 'john-doe')
+    create(:missionary_profile, user: @missionary1, bio: 'Serving in Africa, focusing on education.', country: 'Kenya', ministry_focus: 'Education', organization: @org1, slug: 'john-doe')
 
     @missionary2 = create(:user, :missionary, :approved, name: 'Jane Smith', email: 'jane.smith@example.com', organization: @org2)
-    create(:missionary_profile, user: @missionary2, bio: 'Medical missions in Southeast Asia.', country: 'Thailand', ministry_focus: 'Healthcare', organization: @org2.name, slug: 'jane-smith')
+    create(:missionary_profile, user: @missionary2, bio: 'Medical missions in Southeast Asia.', country: 'Thailand', ministry_focus: 'Healthcare', organization: @org2, slug: 'jane-smith')
 
     @missionary3 = create(:user, :missionary, :approved, name: 'Peter Jones', email: 'peter.jones@example.com', organization: @org1)
-    create(:missionary_profile, user: @missionary3, bio: 'Church planting in South America.', country: 'Brazil', ministry_focus: 'Church Planting', organization: @org1.name, slug: 'peter-jones')
+    create(:missionary_profile, user: @missionary3, bio: 'Church planting in South America.', country: 'Brazil', ministry_focus: 'Church Planting', organization: @org1, slug: 'peter-jones')
 
     @missionary4 = create(:user, :missionary, :approved, name: 'Alice Brown', email: 'alice.brown@example.com', organization: @org2)
-    create(:missionary_profile, user: @missionary4, bio: 'Youth development in Eastern Europe.', country: 'Poland', ministry_focus: 'Youth Ministry', organization: @org2.name, slug: 'alice-brown')
+    create(:missionary_profile, user: @missionary4, bio: 'Youth development in Eastern Europe.', country: 'Poland', ministry_focus: 'Youth Ministry', organization: @org2, slug: 'alice-brown')
 
     # Create a pending missionary (should not appear in search results)
     @pending_missionary = create(:user, :missionary, :pending, name: 'Pending User', email: 'pending@example.com')
-    create(:missionary_profile, user: @pending_missionary, bio: 'Pending bio.', country: 'Pendingland', ministry_focus: 'Pending', organization: 'Pending Org')
+    create(:missionary_profile, user: @pending_missionary, bio: 'Pending bio.', country: 'Pendingland', ministry_focus: 'Pending', organization: create(:organization, name: 'Pending Org'))
   end
 
   it 'displays all approved missionaries by default' do
@@ -123,7 +123,7 @@ RSpec.describe 'Missionary Search and Filter', type: :system do
 
   it 'displays correct Open Graph and canonical tags on missionary profile page' do
     missionary_with_avatar = create(:user, :missionary, :approved, name: 'Avatar Missionary')
-    create(:missionary_profile, user: missionary_with_avatar, bio: 'This is a test bio for Open Graph tags.', country: 'USA', ministry_focus: 'Testing')
+    create(:missionary_profile, user: missionary_with_avatar, bio: 'This is a test bio for Open Graph tags.', country: 'USA', ministry_focus: 'Testing', organization: create(:organization))
     # Attach a dummy avatar for testing purposes
     missionary_with_avatar.avatar.attach(io: File.open(Rails.root.join('spec/fixtures/files/avatar.jpg')), filename: 'avatar.jpg', content_type: 'image/jpeg')
 
@@ -138,5 +138,51 @@ RSpec.describe 'Missionary Search and Filter', type: :system do
 
     # Verify Canonical tag
     expect(page).to have_css("link[rel=\"canonical\"][href=\"#{missionary_url(missionary_with_avatar, host: 'www.example.com', port: 80)}\"]", visible: false)
+  end
+
+  context 'Missionary Update visibility' do
+    let!(:missionary_public_update) { create(:missionary_update, user: @missionary1, visibility: :public_visibility, title: 'Public Update', status: :published) }
+    let!(:missionary_followers_update) { create(:missionary_update, user: @missionary1, visibility: :followers_only, title: 'Followers Only Update', status: :published) }
+    let!(:missionary_private_update) { create(:missionary_update, user: @missionary1, visibility: :private_visibility, title: 'Private Update', status: :published) }
+
+    it 'displays public updates to anonymous users' do
+      visit missionary_path(@missionary1)
+      expect(page).to have_content('Public Update')
+      expect(page).not_to have_content('Followers Only Update')
+      expect(page).not_to have_content('Private Update')
+    end
+
+    # This test will require a logged-in user who is a follower.
+    # For now, I'll skip this and focus on public visibility.
+    # it 'displays followers-only updates to followers' do
+    #   # ... implement login as follower and check ...
+    # end
+  end
+
+  context 'Prayer Request visibility based on MissionaryProfile safety mode' do
+    let!(:missionary_public_profile) { create(:user, :missionary, :approved, name: 'Public Profile Missionary') }
+    let!(:profile_public_mode) { create(:missionary_profile, user: missionary_public_profile, safety_mode: :public_mode, organization: create(:organization)) }
+    let!(:prayer_request_public) { create(:prayer_request, missionary_profile: profile_public_mode, title: 'Public Prayer Request') }
+
+    let!(:missionary_limited_profile) { create(:user, :missionary, :approved, name: 'Limited Profile Missionary') }
+    let!(:profile_limited_mode) { create(:missionary_profile, user: missionary_limited_profile, safety_mode: :limited_mode, organization: create(:organization)) }
+    let!(:prayer_request_limited) { create(:prayer_request, missionary_profile: profile_limited_mode, title: 'Limited Prayer Request') }
+
+    let!(:missionary_private_profile) { create(:user, :missionary, :approved, name: 'Private Profile Missionary') }
+    let!(:profile_private_mode) { create(:missionary_profile, user: missionary_private_profile, safety_mode: :private_mode, organization: create(:organization)) }
+    let!(:prayer_request_private) { create(:prayer_request, missionary_profile: profile_private_mode, title: 'Private Prayer Request') }
+
+    it 'displays prayer requests from public profiles to anonymous users' do
+      visit missionary_path(missionary_public_profile)
+      expect(page).to have_content('Public Prayer Request')
+    end
+
+    it 'does not display prayer requests from limited or private profiles to anonymous users' do
+      visit missionary_path(missionary_limited_profile)
+      expect(page).not_to have_content('Limited Prayer Request')
+
+      visit missionary_path(missionary_private_profile)
+      expect(page).not_to have_content('Private Prayer Request')
+    end
   end
 end
