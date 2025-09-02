@@ -45,8 +45,19 @@ class User < ApplicationRecord
   has_many :email_logs, dependent: :destroy
 
   # File attachments
-  has_one_attached :avatar
-  has_one_attached :banner_image
+  has_one_attached :avatar do |attachable|
+    attachable.variant :thumb, resize_to_limit: [150, 150]
+    attachable.variant :medium, resize_to_limit: [300, 300]
+  end
+  has_one_attached :banner_image do |attachable|
+    attachable.variant :large, resize_to_limit: [1200, 400]
+  end
+
+  # File upload validations (Rails built-in)
+  validate :avatar_content_type, if: :avatar_attached?
+  validate :avatar_size, if: :avatar_attached?
+  validate :banner_image_content_type, if: :banner_image_attached?
+  validate :banner_image_size, if: :banner_image_attached?
 
   # Scopes
   scope :missionaries, -> { where(role: 'missionary') }
@@ -149,6 +160,40 @@ class User < ApplicationRecord
   end
 
   private
+
+  def avatar_attached?
+    avatar.attached?
+  end
+
+  def banner_image_attached?
+    banner_image.attached?
+  end
+
+  def avatar_content_type
+    allowed_types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp']
+    unless allowed_types.include?(avatar.content_type)
+      errors.add(:avatar, 'must be a PNG, JPG, JPEG, GIF, or WebP image')
+    end
+  end
+
+  def avatar_size
+    if avatar.byte_size > 5.megabytes
+      errors.add(:avatar, 'must be less than 5MB')
+    end
+  end
+
+  def banner_image_content_type
+    allowed_types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp']
+    unless allowed_types.include?(banner_image.content_type)
+      errors.add(:banner_image, 'must be a PNG, JPG, JPEG, GIF, or WebP image')
+    end
+  end
+
+  def banner_image_size
+    if banner_image.byte_size > 10.megabytes
+      errors.add(:banner_image, 'must be less than 10MB')
+    end
+  end
 
   def create_missionary_profile_if_needed
     return unless missionary?

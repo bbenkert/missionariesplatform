@@ -108,10 +108,17 @@
               <% if prayer_request.prayed_by?(current_user) %>
                 <span class="text-green-600 text-sm font-medium">✓ Prayed</span>
               <% else %>
-                <%= link_to "Pray", pray_prayer_request_path(prayer_request), 
-                    method: :post,
-                    class: "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-1 px-3 rounded",
-                    data: { confirm: "Would you like to pray for this request?" } %>
+                <%= form_with url: pray_prayer_request_path(prayer_request), 
+                              method: :post, 
+                              local: true,
+                              class: "inline" do |f| %>
+                  <%= f.submit "Pray", 
+                      class: "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-1 px-3 rounded cursor-pointer",
+                      data: { 
+                        disable_with: "Praying...",
+                        confirm: "Would you like to pray for this request?" 
+                      } %>
+                <% end %>
               <% end %>
             </div>
           </div>

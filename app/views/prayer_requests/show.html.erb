@@ -103,7 +103,7 @@
               <div class="text-2xl font-bold text-gray-900">
                 <%= @prayer_request.prayer_count %>
               </div>
-              <div class="text-sm text-gray-500">
+              <div class="text-sm text-gray-500" data-prayer-target="count">
                 <%= pluralize(@prayer_request.prayer_count, 'prayer') %>
               </div>
             </div>
@@ -126,7 +126,7 @@
           </div>
 
           <!-- Pray Button -->
-          <div>
+          <div data-controller="prayer">
             <% if @has_prayed %>
               <div class="flex items-center text-green-600">
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -138,10 +138,14 @@
                 You prayed <%= time_ago_in_words(@prayer_action.created_at) %> ago
               </p>
             <% else %>
-              <%= form_with url: pray_prayer_request_path(@prayer_request), method: :post, local: true do |form| %>
-                <%= form.submit "🙏 I'll Pray for This", 
-                    class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors",
-                    data: { confirm: "Thank you for choosing to pray for #{@prayer_request.missionary_profile.user.name}. Would you like to record your prayer?" } %>
+              <%= form_with url: pray_prayer_request_path(@prayer_request), 
+                            method: :post, 
+                            local: true do |f| %>
+                <%= f.submit "🙏 I'll Pray for This", 
+                    data: { 
+                      disable_with: "Praying..."
+                    },
+                    class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors cursor-pointer" %>
               <% end %>
             <% end %>
           </div>

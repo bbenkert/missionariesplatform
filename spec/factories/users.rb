@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :user do
     name { Faker::Name.name }
     email { Faker::Internet.unique.email }
-    password { 'password123' }
-    password_confirmation { 'password123' }
+    password { 'SecurePassword123!' }
+    password_confirmation { 'SecurePassword123!' }
     is_active { true }
 
     trait :supporter do

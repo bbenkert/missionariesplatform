@@ -165,6 +165,9 @@ GEM
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
+    get_process_mem (1.0.0)
+      bigdecimal (>= 2.0)
+      ffi (~> 1.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     httparty (0.23.1)
@@ -268,6 +271,10 @@ GEM
     public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
+    puma_worker_killer (1.0.0)
+      bigdecimal (>= 2.0)
+      get_process_mem (>= 0.2)
+      puma (>= 2.7)
     pundit (2.5.0)
       activesupport (>= 3.0.0)
     racc (1.8.1)
@@ -323,6 +330,10 @@ GEM
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.25.2)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.2)
       io-console (~> 0.5)
@@ -360,6 +371,12 @@ GEM
       websocket (~> 1.0)
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
+    sidekiq (7.3.9)
+      base64
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
     spring (4.3.0)
     spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
@@ -431,15 +448,18 @@ DEPENDENCIES
   pg (~> 1.1)
   propshaft
   puma (~> 6.0)
+  puma_worker_killer
   pundit (~> 2.3)
   rack-attack (~> 6.7)
   rack-cors (~> 2.0)
   rails (~> 8.0.0)
   rails-controller-testing
+  redis (~> 5.0)
   resend (~> 0.8)
   rspec-rails (~> 6.0)
   selenium-webdriver (~> 4.10)
   shoulda-matchers (~> 5.3)
+  sidekiq (~> 7.0)
   spring
   spring-watcher-listen
   stimulus-rails

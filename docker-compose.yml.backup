@@ -1,5 +1,3 @@
-name: missionary_platform_dev
-
 services:
   db:
     image: postgres:16
@@ -12,7 +10,7 @@ services:
     ports:
       - "5432:5432"
 
-  redis:
+  cache:
     image: redis:7-alpine
     volumes:
       - redis_data:/data
@@ -28,10 +26,10 @@ services:
       - "3000:3000"
     depends_on:
       - db
-      - redis
+      - cache
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/missionary_platform_development
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: redis://cache:6379/0
       RAILS_ENV: development
     stdin_open: true
     tty: true
@@ -44,10 +42,10 @@ services:
       - bundle_cache:/usr/local/bundle
     depends_on:
       - db
-      - redis
+      - cache
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/missionary_platform_development
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: redis://cache:6379/0
       RAILS_ENV: development
 
 volumes:

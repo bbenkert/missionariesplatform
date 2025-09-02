@@ -1,15 +1,26 @@
-# Sidekiq configuration
+# Application initializer for Redis and Sidekiq configuration
 
-if defined?(Sidekiq)
-  # Determine Redis URL based on environment
-  redis_url = ENV.fetch('REDIS_URL') do
-    if ENV['RAILS_ENV'] == 'development' && File.exist?('/.dockerenv')
-      'redis://redis:6379/0'  # Docker internal network
-    else
-      'redis://localhost:6379/0'  # Local development
-    end
+# Redis configuration - use redis hostname in Docker, localhost for local development
+redis_url = ENV.fetch('REDIS_URL') do
+  if ENV['RAILS_ENV'] == 'development' && File.exist?('/.dockerenv')
+    'redis://redis:6379/0'  # Docker internal network
+  else
+    'redis://localhost:6379/0'  # Local development
   end
+end
 
+# Initialize Redis connection for application use
+redis_client = Redis.new(
+  url: redis_url,
+  timeout: 1,
+  reconnect_attempts: 3
+)
+
+# Set Redis instance for application use
+Rails.application.config.redis = redis_client
+
+# Sidekiq configuration
+if defined?(Sidekiq)
   Sidekiq.configure_server do |config|
     config.redis = {
       url: redis_url,

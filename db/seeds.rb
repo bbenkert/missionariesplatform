@@ -25,8 +25,8 @@ end
 puts "Creating admin user..."
 admin_user = User.find_or_create_by(email: "admin@missionaryplatform.com") do |user|
   user.name = "Platform Administrator"
-  user.password = "password123"
-  user.password_confirmation = "password123"
+  user.password = "password123456"
+  user.password_confirmation = "password123456"
   user.role = "admin"
   user.status = "approved"
   user.organization_id = organizations.sample.id
@@ -36,8 +36,8 @@ puts "Creating sample supporters..."
 5.times do |i|
   User.find_or_create_by(email: "supporter#{i+1}@example.com") do |user|
     user.name = "Supporter #{i+1}"
-    user.password = "password123"
-    user.password_confirmation = "password123"
+    user.password = "password123456"
+    user.password_confirmation = "password123456"
     user.role = "supporter"
     user.status = "approved"
     user.organization_id = organizations.sample.id
@@ -51,8 +51,8 @@ ministry_focuses = ["Church Planting", "Bible Translation", "Medical Missions", 
 10.times do |i|
   missionary = User.find_or_create_by(email: "missionary#{i+1}@example.com") do |user|
     user.name = "Missionary #{i+1}"
-    user.password = "password123"
-    user.password_confirmation = "password123"
+    user.password = "password123456"
+    user.password_confirmation = "password123456"
     user.role = "missionary"
     user.status = "approved"
     user.organization_id = organizations.sample.id
@@ -207,9 +207,9 @@ end
 puts "Seed data created successfully!"
 puts ""
 puts "=== Login Credentials ==="
-puts "Admin: admin@missionaryplatform.com / password123"
-puts "Sample supporter: supporter1@example.com / password123"
-puts "Sample missionary: missionary1@example.com / password123"
+puts "Admin: admin@missionaryplatform.com / password123456"
+puts "Sample supporter: supporter1@example.com / password123456"
+puts "Sample missionary: missionary1@example.com / password123456"
 puts ""
 puts "=== Statistics ==="
 puts "Organizations: #{Organization.count}"

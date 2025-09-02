@@ -3,15 +3,98 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["button", "count"]
 
-  pray(event) {
+  handleFormSubmit(event) {
     event.preventDefault()
     
-    const form = event.target.closest('form')
+    console.log('Prayer form submitted - Stimulus controller handling')
+    
+    const form = event.target
     const url = form.action
+    const method = form.method
+    const formData = new FormData(form)
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
-    // Disable button during request
+    console.log('Prayer URL:', url)
+    console.log('Method:', method)
+    console.log('CSRF Token:', csrfToken)
+
+    // Find the submit button
+    const button = form.querySelector('input[type="submit"]')
+    if (button) {
+      const originalValue = button.value
+      button.disabled = true
+      button.value = "Praying..."
+    }
+
+    fetch(url, {
+      method: method.toUpperCase(),
+      headers: {
+        'X-CSRF-Token': csrfToken,
+        'Accept': 'application/json'
+      },
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json()
+      }
+      throw new Error('Network response was not ok')
+    })
+    .then(data => {
+      console.log('Prayer response:', data)
+      
+      // Update the prayer count if target exists
+      if (this.hasCountTarget) {
+        const currentCount = parseInt(this.countTarget.textContent.split(' ')[0])
+        this.countTarget.textContent = `${currentCount + 1} prayers`
+      }
+
+      // Show success feedback
+      if (button) {
+        button.value = "✓ Prayed!"
+        button.classList.add('bg-green-600')
+        button.classList.remove('bg-blue-600')
+      }
+
+      // Reload the page after a short delay to show the updated state
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
+    })
+    .catch(error => {
+      console.error('Error:', error)
+      
+      if (button) {
+        button.disabled = false
+        button.value = originalValue
+        button.classList.add('bg-red-600')
+        button.classList.remove('bg-blue-600')
+        
+        setTimeout(() => {
+          button.classList.remove('bg-red-600')
+          button.classList.add('bg-blue-600')
+        }, 2000)
+      }
+    })
+  }
+
+  // Keep the old pray method for backward compatibility
+  pray(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    event.stopImmediatePropagation()
+    
+    console.log('Prayer button clicked - Stimulus controller handling')
+    
+    // Get URL from button data attribute instead of form
     const button = this.buttonTarget
+    const url = button.dataset.prayerUrl
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+
+    console.log('Prayer URL:', url)
+    console.log('CSRF Token:', csrfToken)
+
+    // Disable button during request
     const originalContent = button.innerHTML
     button.disabled = true
     button.innerHTML = `

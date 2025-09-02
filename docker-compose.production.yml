@@ -1,0 +1,153 @@
+# Production Docker Compose for VPS with 2 CPUs and 8GB RAM
+# Optimized for performance and resource efficiency
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-missionary_platform_production}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      # PostgreSQL optimization for 8GB RAM
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - "127.0.0.1:5432:5432"
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+        reservations:
+          memory: 2G
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 1gb --maxmemory-policy allkeys-lru --save 60 1000
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 1G
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    command: bundle exec puma -C config/puma/production.rb
+    volumes:
+      - ./public:/app/public
+      - ./log:/app/log
+      - ./tmp:/app/tmp
+      - uploads:/app/storage
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${DATABASE_USERNAME:-postgres}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME:-missionary_platform_production}
+      REDIS_URL: redis://redis:6379/0
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      # Performance tuning
+      RAILS_MAX_THREADS: 16
+      WEB_CONCURRENCY: 4
+      MALLOC_ARENA_MAX: 2
+      # Caching
+      RAILS_CACHE_STORE: redis_cache_store
+      ACTION_CABLE_ADAPTER: redis
+      ACTIVE_JOB_QUEUE_ADAPTER: sidekiq
+      # Security
+      RAILS_SERVE_STATIC_FILES: 1
+      RAILS_LOG_TO_STDOUT: 1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    volumes:
+      - ./log:/app/log
+      - ./tmp:/app/tmp
+      - uploads:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgresql://${DATABASE_USERNAME:-postgres}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME:-missionary_platform_production}
+      REDIS_URL: redis://redis:6379/0
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      MALLOC_ARENA_MAX: 2
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/sites-available:/etc/nginx/sites-available
+      - ./public:/var/www/public
+      - ./docker/ssl:/etc/nginx/ssl
+      - uploads:/var/www/uploads
+    depends_on:
+      - web
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads:

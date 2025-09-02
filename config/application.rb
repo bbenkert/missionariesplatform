@@ -24,10 +24,7 @@ module MissionaryPlatform
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Active Job configuration
-    # Disable background jobs for now
-    # Use async queue adapter instead of Sidekiq
-    config.active_job.queue_adapter = :async
+    # Active Job configuration - Use inline for non-Docker, Sidekiq for Docker
     config.active_job.queue_adapter = :inline
 
     # Generator configurations
@@ -44,8 +41,12 @@ module MissionaryPlatform
     # CORS configuration for API endpoints (if needed)
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'
-        resource '*', headers: :any, methods: [:get, :post, :options]
+        # Only allow specific origins in production
+        origins Rails.env.development? ? ['localhost:3000', '127.0.0.1:3000'] : ['https://yourdomain.com', 'https://www.yourdomain.com']
+        resource '*', 
+          headers: :any, 
+          methods: [:get, :post, :put, :patch, :delete, :options],
+          credentials: true
       end
     end
 

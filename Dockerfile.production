@@ -1,0 +1,50 @@
+# Production Dockerfile optimized for VPS deployment
+FROM ruby:3.4.5-alpine AS base
+
+# Install system dependencies
+RUN apk add --no-cache \
+    build-base \
+    postgresql-dev \
+    nodejs \
+    npm \
+    curl \
+    tzdata \
+    imagemagick \
+    vips-dev \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Install Ruby dependencies
+COPY Gemfile Gemfile.lock ./
+RUN bundle config set --local deployment 'true' && \
+    bundle config set --local without 'development test' && \
+    bundle install --jobs $(nproc) && \
+    bundle clean --force && \
+    rm -rf /usr/local/bundle/cache
+
+# Install Node dependencies and build assets
+COPY package*.json ./
+RUN npm ci --production --silent
+
+# Copy application code
+COPY . .
+
+# Precompile assets
+RUN SECRET_KEY_BASE=dummy RAILS_ENV=production bundle exec rails assets:precompile
+
+# Create non-root user
+RUN addgroup -g 1001 -S rails && \
+    adduser -S rails -G rails -u 1001
+
+# Set permissions
+RUN chown -R rails:rails /app
+USER rails
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+EXPOSE 3000
+
+CMD ["bundle", "exec", "puma", "-C", "config/puma/production.rb"]

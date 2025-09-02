@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "User Authentication", type: :request do
-  let(:user) { create(:user, email: 'user@example.com', password: 'password123', password_confirmation: 'password123') }
-  let(:admin) { create(:user, :admin, email: 'admin@example.com', password: 'password123', password_confirmation: 'password123') }
+  let(:user) { create(:user, email: 'user@example.com', password: "SecurePassword123!", password_confirmation: "SecurePassword123!"') }
+  let(:admin) { create(:user, :admin, email: 'admin@example.com', password: "SecurePassword123!", password_confirmation: "SecurePassword123!"') }
 
   describe 'GET /users/sign_in' do
     context 'when user is not signed in' do
@@ -27,14 +27,14 @@ RSpec.describe "User Authentication", type: :request do
     context 'with valid credentials' do
       it 'signs in the user and redirects to dashboard' do
         post user_session_path, params: {
-          user: { email: user.email, password: 'password123' }
+          user: { email: user.email, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"' }
         }
         expect(response).to redirect_to(dashboard_path)
       end
 
       it 'redirects admin to admin dashboard' do
         post user_session_path, params: {
-          user: { email: admin.email, password: 'password123' }
+          user: { email: admin.email, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"' }
         }
         expect(response).to redirect_to(admin_root_path)
       end

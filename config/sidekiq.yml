@@ -1,0 +1,59 @@
+# Sidekiq configuration for production VPS deployment
+
+# Concurrency optimized for 2 CPU VPS
+# Use fewer workers to conserve memory while maintaining responsiveness
+:concurrency: 10
+
+# Queues with priorities
+:queues:
+  - [critical, 4]    # High priority (notifications, payments)
+  - [default, 3]     # Normal priority (emails, updates)
+  - [low, 1]         # Low priority (analytics, cleanup)
+  - [mailers, 2]     # Email delivery
+
+# Timeout settings
+:timeout: 30
+:poll_interval_average: 5
+
+# Production environment
+:environment: production
+
+# Process info
+:pidfile: tmp/pids/sidekiq.pid
+:logfile: log/sidekiq.log
+
+# Memory management
+:max_retries: 5
+:dead_max_jobs: 10000
+:dead_timeout_in_seconds: 180
+
+# Redis connection
+:redis:
+  :url: redis://redis:6379/0
+  :pool_timeout: 1
+  :size: 25
+
+# Health check
+:health_check_port: 7433
+
+# Cron-like scheduling (if using sidekiq-cron)
+:cron:
+  'weekly_digest':
+    cron: '0 8 * * 1'  # Every Monday at 8 AM
+    class: WeeklyDigestJob
+  'cleanup_logs':
+    cron: '0 2 * * *'   # Every day at 2 AM
+    class: CleanupLogsJob
+
+# Lifecycle hooks
+:lifecycle:
+  :startup:
+    - SidekiqInitializer
+  :quiet:
+    - SidekiqShutdown
+
+# Resource limits
+:memory_killer:
+  :max_rss: 500      # MB - restart worker if memory exceeds 500MB
+  :grace_time: 30    # seconds
+  :shutdown_wait: 10 # seconds

@@ -19,11 +19,11 @@ RSpec.describe User, type: :model do
       it 'is invalid with a short password' do
         user = build(:user, password: 'short', password_confirmation: 'short')
         expect(user).not_to be_valid
-        expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
+        expect(user.errors[:password]).to include('is too short (minimum is 12 characters)')
       end
 
       it 'is invalid when password confirmation does not match' do
-        user = build(:user, password: 'password123', password_confirmation: 'different')
+        user = build(:user, password: "SecurePassword123!", password_confirmation: 'different')
         expect(user).not_to be_valid
         expect(user.errors[:password_confirmation]).to include("doesn't match Password")
       end

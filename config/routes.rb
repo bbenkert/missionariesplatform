@@ -2,8 +2,28 @@ Rails.application.routes.draw do
   devise_for :users
   # Health check endpoint
   get "up" => "rails/health#show", as: :rails_health_check
+  get "health" => "rails/health#show"
 
-  
+  # Sidekiq Web UI (admin only)
+  if Rails.env.production?
+    begin
+      require 'sidekiq/web'
+      mount Sidekiq::Web => '/sidekiq', constraints: lambda { |request|
+        # Only allow admin users to access Sidekiq web interface
+        user = User.find_by(id: request.session[:user_id]) if request.session[:user_id]
+        user&.admin?
+      }
+    rescue LoadError
+      Rails.logger.warn "Sidekiq not available - skipping web UI mount"
+    end
+  else
+    begin
+      require 'sidekiq/web'
+      mount Sidekiq::Web => '/sidekiq'
+    rescue LoadError
+      Rails.logger.warn "Sidekiq not available - skipping web UI mount"
+    end
+  end
 
   # Root route
   root "home#index"

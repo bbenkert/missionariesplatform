@@ -3,7 +3,7 @@ FactoryBot.define do
     user { association :user, :missionary }
     title { Faker::Lorem.sentence }
     content { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
-    status { :draft }
+    status { :published }
 
     trait :published do
       status { :published }

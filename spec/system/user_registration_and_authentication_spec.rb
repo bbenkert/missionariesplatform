@@ -7,14 +7,12 @@ RSpec.describe 'User Registration and Authentication', type: :system do
 
   describe 'User Registration' do
     context 'successful supporter registration' do
-      it 'allows a supporter to register and sign in' do
-        visit sign_up_path
-
-        fill_in 'Full Name', with: 'John Supporter'
+    it 'allows a supporter to register and sign in' do
+      visit new_user_registration_path        fill_in 'Full Name', with: 'John Supporter'
         fill_in 'Email address', with: 'john.supporter@example.com'
         choose 'Supporter'
-        fill_in 'Password', with: 'password123'
-        fill_in 'Confirm Password', with: 'password123'
+        fill_in 'Password', with: 'SecurePassword123!'
+        fill_in 'Confirm Password', with: 'SecurePassword123!'
         check 'I agree to the Terms of Service and Privacy Policy'
 
         click_button 'Create Account'
@@ -32,14 +30,12 @@ RSpec.describe 'User Registration and Authentication', type: :system do
     end
 
     context 'successful missionary registration' do
-      it 'allows a missionary to register with pending status' do
-        visit sign_up_path
-
-        fill_in 'Full Name', with: 'Jane Missionary'
+    it 'allows a missionary to register with pending status' do
+      visit new_user_registration_path        fill_in 'Full Name', with: 'Jane Missionary'
         fill_in 'Email address', with: 'jane.missionary@example.com'
         choose 'Missionary'
-        fill_in 'Password', with: 'password123'
-        fill_in 'Confirm Password', with: 'password123'
+        fill_in 'Password', with: 'SecurePassword123!'
+        fill_in 'Confirm Password', with: 'SecurePassword123!'
         check 'I agree to the Terms of Service and Privacy Policy'
 
         click_button 'Create Account'
@@ -54,7 +50,7 @@ RSpec.describe 'User Registration and Authentication', type: :system do
 
     context 'registration validation errors' do
       it 'shows validation errors for invalid data' do
-        visit sign_up_path
+        visit new_user_registration_path
 
         fill_in 'Full Name', with: ''
         fill_in 'Email address', with: 'invalid-email'
@@ -73,13 +69,13 @@ RSpec.describe 'User Registration and Authentication', type: :system do
       it 'shows error for duplicate email' do
         create(:user, email: 'existing@example.com')
 
-        visit sign_up_path
+        visit new_user_registration_path
 
         fill_in 'Full Name', with: 'John Doe'
         fill_in 'Email address', with: 'existing@example.com'
         choose 'Supporter'
-        fill_in 'Password', with: 'password123'
-        fill_in 'Confirm Password', with: 'password123'
+        fill_in 'Password', with: 'SecurePassword123!'
+        fill_in 'Confirm Password', with: 'SecurePassword123!'
         check 'I agree to the Terms of Service and Privacy Policy'
 
         click_button 'Create Account'
@@ -91,14 +87,14 @@ RSpec.describe 'User Registration and Authentication', type: :system do
   end
 
   describe 'User Sign In' do
-    let!(:user) { create(:user, :supporter, name: 'John Doe', email: 'john@example.com', password: 'password123') }
+    let!(:user) { create(:user, :supporter, name: 'John Doe', email: 'john@example.com', password: 'SecurePassword123!') }
 
     context 'successful sign in' do
       it 'allows user to sign in with correct credentials' do
         visit sign_in_path
 
         fill_in 'Email address', with: 'john@example.com'
-        fill_in 'Password', with: 'password123'
+        fill_in 'Password', with: 'SecurePassword123!'
 
         click_button 'Sign In'
 
@@ -131,7 +127,7 @@ RSpec.describe 'User Registration and Authentication', type: :system do
         visit sign_in_path
 
         fill_in 'Email address', with: 'nonexistent@example.com'
-        fill_in 'Password', with: 'password123'
+        fill_in 'Password', with: 'SecurePassword123!'
 
         click_button 'Sign In'
 
@@ -142,14 +138,14 @@ RSpec.describe 'User Registration and Authentication', type: :system do
   end
 
   describe 'Missionary Approval Flow' do
-    let!(:missionary) { create(:user, :missionary, :pending, name: 'Jane Missionary', email: 'jane@example.com', password: 'password123') }
-    let!(:admin) { create(:user, :admin, name: 'Admin User', email: 'admin@example.com', password: 'password123') }
+    let!(:missionary) { create(:user, :missionary, :pending, name: 'Jane Missionary', email: 'jane@example.com', password: 'SecurePassword123!') }
+    let!(:admin) { create(:user, :admin, name: 'Admin User', email: 'admin@example.com', password: 'SecurePassword123!') }
 
     it 'allows admin to approve missionary' do
       # Sign in as admin
       visit sign_in_path
       fill_in 'Email address', with: 'admin@example.com'
-      fill_in 'Password', with: 'password123'
+      fill_in 'Password', with: 'SecurePassword123!'
       click_button 'Sign In'
 
       # Navigate to admin panel (assuming it exists)
@@ -164,7 +160,7 @@ RSpec.describe 'User Registration and Authentication', type: :system do
 
       visit sign_in_path
       fill_in 'Email address', with: 'jane@example.com'
-      fill_in 'Password', with: 'password123'
+      fill_in 'Password', with: 'SecurePassword123!'
       click_button 'Sign In'
 
       # Should now be able to access missionary features
@@ -176,10 +172,8 @@ RSpec.describe 'User Registration and Authentication', type: :system do
   describe 'Password Reset Flow' do
     let!(:user) { create(:user, email: 'user@example.com') }
 
-    it 'allows user to request password reset' do
-      visit sign_in_path
-
-      click_link 'Forgot your password?'
+      it 'allows user to request password reset' do
+        visit new_user_session_path      click_link 'Forgot your password?'
 
       fill_in 'Email address', with: 'user@example.com'
       click_button 'Send Reset Instructions'
@@ -189,9 +183,9 @@ RSpec.describe 'User Registration and Authentication', type: :system do
   end
 
   describe 'Role-based Access Control' do
-    let!(:supporter) { create(:user, :supporter, name: 'Supporter User', email: 'supporter@example.com', password: 'password123') }
-    let!(:missionary) { create(:user, :missionary, :approved, name: 'Missionary User', email: 'missionary@example.com', password: 'password123') }
-    let!(:admin) { create(:user, :admin, name: 'Admin User', email: 'admin@example.com', password: 'password123') }
+    let!(:supporter) { create(:user, :supporter, name: 'Supporter User', email: 'supporter@example.com', password: 'SecurePassword123!') }
+    let!(:missionary) { create(:user, :missionary, :approved, name: 'Missionary User', email: 'missionary@example.com', password: 'SecurePassword123!') }
+    let!(:admin) { create(:user, :admin, name: 'Admin User', email: 'admin@example.com', password: 'SecurePassword123!') }
 
     it 'supporter can access basic features' do
       sign_in(supporter)

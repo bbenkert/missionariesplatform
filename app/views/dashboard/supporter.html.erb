@@ -244,8 +244,13 @@
                         </span>
                         <div class="flex items-center space-x-2">
                           <%= form_with url: pray_prayer_request_path(prayer_request), method: :post, local: false, 
-                              class: "inline-flex items-center", data: { controller: "prayer" } do %>
-                            <button type="submit" data-prayer-target="button" data-action="click->prayer#pray"
+                              class: "inline-flex items-center", 
+                              data: { 
+                                controller: "prayer",
+                                action: "submit->prayer#handleFormSubmit" 
+                              } do %>
+                            <button type="submit" data-prayer-target="button"
+                                    data-disable-with: "🙏"
                                     class="text-purple-600 hover:text-purple-800 transition-colors duration-200">
                               <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"></path>

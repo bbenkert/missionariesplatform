@@ -3,7 +3,9 @@ class MissionariesController < ApplicationController
 
   def index
     @missionaries = User.approved_missionaries
-                       .includes(:missionary_profile, :organization, avatar_attachment: :blob) # Added :organization to includes
+                       .includes(:organization, 
+                                 missionary_profile: :organization, 
+                                 avatar_attachment: :blob)
                        .joins(:missionary_profile)
 
     # Filtering
@@ -60,7 +62,11 @@ class MissionariesController < ApplicationController
   end
 
   def show
-    @missionary = User.approved_missionaries.includes(:missionary_profile, :missionary_updates).find(params[:id])
+    @missionary = User.approved_missionaries
+                     .includes(missionary_profile: :organization, 
+                              missionary_updates: [], 
+                              organization: [])
+                     .find(params[:id])
     @updates = @missionary.missionary_updates.published.visible_to(current_user).recent.limit(10)
     @prayer_requests = @missionary.missionary_profile.prayer_requests.published.visible_to(current_user).recent.limit(5)
     @can_message = current_user&.can_message?(@missionary)

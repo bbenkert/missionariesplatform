@@ -24,7 +24,16 @@ class MissionaryUpdate < ApplicationRecord
   end
 
   # File attachments
-  has_many_attached :images
+  has_many_attached :images do |attachable|
+    attachable.variant :thumb, resize_to_limit: [300, 300]
+    attachable.variant :medium, resize_to_limit: [600, 600]
+    attachable.variant :large, resize_to_limit: [1200, 1200]
+  end
+
+  # File upload validations (Rails built-in)
+  validate :images_content_type, if: :images_attached?
+  validate :images_size, if: :images_attached?
+  validate :images_limit, if: :images_attached?
 
   # Rich text content
   has_rich_text :content
@@ -71,6 +80,35 @@ class MissionaryUpdate < ApplicationRecord
   def notify_followers
     # TODO: Implement notification system without background jobs
     # NotificationJob.perform_later('update_published', self.id)
+  end
+
+  def images_attached?
+    images.attached? && images.any?
+  end
+
+  def images_content_type
+    allowed_types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp']
+    images.each do |image|
+      unless allowed_types.include?(image.content_type)
+        errors.add(:images, 'must be PNG, JPG, JPEG, GIF, or WebP images')
+        break
+      end
+    end
+  end
+
+  def images_size
+    images.each do |image|
+      if image.byte_size > 10.megabytes
+        errors.add(:images, 'each image must be less than 10MB')
+        break
+      end
+    end
+  end
+
+  def images_limit
+    if images.count > 10
+      errors.add(:images, 'maximum 10 images allowed per update')
+    end
   end
 
   def update_tsvector

@@ -23,7 +23,12 @@ Rails.application.configure do
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
-    config.cache_store = :memory_store
+    # Use Redis for caching in development when enabled
+    config.cache_store = :redis_cache_store, {
+      url: ENV.fetch('REDIS_URL', 'redis://redis:6379/0'),
+      expires_in: 30.minutes,
+      namespace: 'missionary_platform_dev_cache'
+    }
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
@@ -58,6 +63,14 @@ Rails.application.configure do
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
+
+  # Use Sidekiq for background jobs in development
+  config.active_job.queue_adapter = :sidekiq
+
+  # Session store with Redis cache store for development
+  config.session_store :cache_store,
+    key: '_missionary_platform_dev_session',
+    expire_after: 24.hours
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
