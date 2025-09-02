@@ -1,0 +1,193 @@
+<% content_for :title, "Edit Profile" %>
+
+<div class="bg-gray-50 min-h-screen py-12">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-lg mb-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
+        <p class="mt-1 text-gray-600">Update your account information and preferences.</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-lg">
+      <div class="px-6 py-8">
+        <%= form_with model: @user, url: profile_path, method: :patch, local: true, 
+                     class: "space-y-6", multipart: true do |form| %>
+          
+          <!-- Error Messages -->
+          <% if @user.errors.any? %>
+            <div class="bg-red-50 border border-red-200 rounded-md p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">
+                    There were <%= pluralize(@user.errors.count, "error") %> with your submission:
+                  </h3>
+                  <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                    <% @user.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="space-y-6">
+              <!-- Basic Information -->
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                
+                <div class="space-y-4">
+                  <!-- Name -->
+                  <div>
+                    <%= form.label :name, "Full Name", class: "block text-sm font-medium text-gray-700" %>
+                    <%= form.text_field :name, 
+                                       required: true,
+                                       class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+                  </div>
+
+                  <!-- Email (read-only) -->
+                  <div>
+                    <%= form.label :email, "Email Address", class: "block text-sm font-medium text-gray-700" %>
+                    <%= form.email_field :email, 
+                                        readonly: true,
+                                        class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 sm:text-sm" %>
+                    <p class="mt-1 text-xs text-gray-500">Email cannot be changed. Contact support if you need to update this.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Image -->
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Profile Picture</h3>
+                
+                <!-- Current Avatar -->
+                <div class="flex items-center space-x-4 mb-4">
+                  <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+                    <% if @user.avatar.attached? %>
+                      <%= image_tag @user.avatar, class: "w-16 h-16 rounded-full object-cover" %>
+                    <% else %>
+                      <span class="text-xl text-gray-600"><%= @user.name.first %></span>
+                    <% end %>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-900">Current Photo</h4>
+                    <p class="text-sm text-gray-600">
+                      <% if @user.avatar.attached? %>
+                        Upload a new photo to replace
+                      <% else %>
+                        No photo uploaded yet
+                      <% end %>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Upload New Avatar -->
+                <div>
+                  <%= form.label :avatar, "Choose New Photo", class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.file_field :avatar, 
+                                     accept: "image/*",
+                                     class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+                  <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+              <!-- Account Information -->
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
+                
+                <div class="space-y-4">
+                  <!-- Role (read-only) -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Account Type</label>
+                    <div class="mt-1">
+                      <%= user_role_badge(@user) %>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">Account type cannot be changed.</p>
+                  </div>
+
+                  <!-- Status (read-only) -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Account Status</label>
+                    <div class="mt-1">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                 <%= @user.approved? ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                        <%= @user.status.humanize %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Organization (read-only if exists) -->
+                  <% if @user.organization %>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700">Organization</label>
+                      <div class="mt-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 sm:text-sm">
+                        <%= @user.organization.name %>
+                      </div>
+                      <p class="mt-1 text-xs text-gray-500">Organization assignment cannot be changed.</p>
+                    </div>
+                  <% end %>
+
+                  <!-- Member Since (read-only) -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Member Since</label>
+                    <div class="mt-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 sm:text-sm">
+                      <%= @user.created_at.strftime("%B %d, %Y") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Privacy Settings -->
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Privacy Settings</h3>
+                
+                <div class="bg-blue-50 rounded-lg p-4">
+                  <div class="flex">
+                    <div class="flex-shrink-0">
+                      <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-blue-800">Privacy Notice</h3>
+                      <div class="mt-1 text-sm text-blue-700">
+                        <p>As a supporter, your profile information is private. Only your name and prayer activity may be visible to missionaries you follow.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+            <div class="flex space-x-3">
+              <%= form.submit "Save Changes", 
+                             class: "bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors" %>
+              <%= link_to "Cancel", profile_path, 
+                         class: "bg-gray-300 text-gray-700 px-6 py-2 rounded-md font-medium hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors" %>
+            </div>
+            <div>
+              <%= link_to "Back to Profile", profile_path, 
+                         class: "text-gray-600 hover:text-gray-800 font-medium" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
