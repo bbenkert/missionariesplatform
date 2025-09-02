@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_124846) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_131505) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -68,6 +68,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_124846) do
     t.index ["sender_id", "recipient_id"], name: "index_conversations_on_sender_id_and_recipient_id", unique: true
     t.index ["sender_id"], name: "index_conversations_on_sender_id"
     t.index ["updated_at"], name: "index_conversations_on_updated_at"
+  end
+
+  create_table "email_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "email_type", null: false
+    t.string "resend_id", null: false
+    t.datetime "sent_at"
+    t.datetime "bounced_at"
+    t.datetime "complained_at"
+    t.datetime "delivered_at"
+    t.jsonb "meta", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bounced_at"], name: "index_email_logs_on_bounced_at"
+    t.index ["complained_at"], name: "index_email_logs_on_complained_at"
+    t.index ["email_type"], name: "index_email_logs_on_email_type"
+    t.index ["resend_id"], name: "index_email_logs_on_resend_id", unique: true
+    t.index ["sent_at"], name: "index_email_logs_on_sent_at"
+    t.index ["user_id"], name: "index_email_logs_on_user_id"
   end
 
   create_table "follows", force: :cascade do |t|
@@ -151,6 +170,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_124846) do
     t.index ["update_type"], name: "index_missionary_updates_on_update_type"
     t.index ["user_id"], name: "index_missionary_updates_on_user_id"
     t.index ["visibility"], name: "index_missionary_updates_on_visibility"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "notification_type", null: false
+    t.jsonb "payload", default: {}
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_type"], name: "index_notifications_on_notification_type"
+    t.index ["read_at"], name: "index_notifications_on_read_at"
+    t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -238,12 +270,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_124846) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
+  add_foreign_key "email_logs", "users"
   add_foreign_key "follows", "users"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "missionary_profiles", "organizations"
   add_foreign_key "missionary_profiles", "users"
   add_foreign_key "missionary_updates", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "prayer_actions", "prayer_requests"
   add_foreign_key "prayer_actions", "users"
   add_foreign_key "prayer_requests", "missionary_profiles"

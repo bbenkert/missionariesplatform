@@ -40,6 +40,10 @@ class User < ApplicationRecord
   has_many :received_conversations, class_name: 'Conversation', foreign_key: 'recipient_id', dependent: :destroy
   has_many :messages, foreign_key: 'sender_id', dependent: :destroy
 
+  # Notifications and email logs
+  has_many :notifications, dependent: :destroy
+  has_many :email_logs, dependent: :destroy
+
   # File attachments
   has_one_attached :avatar
   has_one_attached :banner_image
@@ -111,6 +115,37 @@ class User < ApplicationRecord
 
   def public_profile?
     missionary? && approved? && is_active?
+  end
+
+  # Notification and email preferences
+  def unread_notifications_count
+    notifications.unread.count
+  end
+
+  def email_preferences
+    settings&.dig('email_preferences') || default_email_preferences
+  end
+
+  def default_email_preferences
+    {
+      'weekly_digest' => true,
+      'urgent_prayers' => true,
+      'new_followers' => supporter? ? false : true,
+      'prayer_answered' => true,
+      'missionary_updates' => supporter? ? true : false
+    }
+  end
+
+  def email_enabled?(type)
+    email_preferences[type.to_s] == true
+  end
+
+  def update_email_preference(type, enabled)
+    current_settings = settings || {}
+    current_prefs = current_settings['email_preferences'] || default_email_preferences
+    current_prefs[type.to_s] = enabled
+    current_settings['email_preferences'] = current_prefs
+    update!(settings: current_settings)
   end
 
   private

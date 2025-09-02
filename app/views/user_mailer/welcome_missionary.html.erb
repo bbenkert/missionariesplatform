@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: white;
+      padding: 40px 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 32px;
+      font-weight: 600;
+    }
+    .header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 18px;
+    }
+    .welcome-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .content {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    .section {
+      padding: 30px 25px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section h2 {
+      color: #1f2937;
+      font-size: 24px;
+      margin: 0 0 20px 0;
+      font-weight: 600;
+    }
+    .section p {
+      margin-bottom: 15px;
+      color: #374151;
+      font-size: 16px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      margin: 15px 10px 15px 0;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .approval-notice {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .approval-notice h3 {
+      color: #92400e;
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+    .approval-notice p {
+      color: #92400e;
+      margin: 0;
+      font-size: 14px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 25px 0;
+    }
+    .feature-card {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .feature-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .feature-desc {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+    .next-steps {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border-radius: 8px;
+      padding: 25px;
+      margin: 20px 0;
+    }
+    .next-steps h3 {
+      color: #065f46;
+      margin: 0 0 15px 0;
+      font-size: 20px;
+    }
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .step-list li {
+      background: white;
+      margin-bottom: 10px;
+      padding: 12px 15px;
+      border-radius: 6px;
+      border-left: 4px solid #10b981;
+      font-weight: 500;
+    }
+    .footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #10b981;
+      text-decoration: none;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .header { padding: 30px 15px; }
+      .section { padding: 25px 20px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .btn { display: block; margin: 10px 0; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="welcome-icon">🙏</div>
+    <h1>Welcome, Missionary!</h1>
+    <p>Your ministry journey just got a powerful digital companion</p>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <h2>Hello, <%= user_name %>!</h2>
+      <p>
+        Thank you for registering as a <strong>Missionary</strong> on our platform! You've just taken an important 
+        step in connecting your ministry with a global community of prayer warriors and supporters.
+      </p>
+      <p>
+        We believe that no missionary should serve alone, and this platform is designed to ensure you have 
+        the prayer support, encouragement, and community you need for effective ministry.
+      </p>
+
+      <div class="approval-notice">
+        <h3>⏳ Your Account is Pending Approval</h3>
+        <p>
+          For the safety and authenticity of our community, all missionary accounts require admin approval. 
+          We'll review your application and notify you via email once you're approved (typically within 24-48 hours).
+        </p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>What You'll Be Able to Do Once Approved</h2>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="feature-icon">👤</span>
+          <div class="feature-title">Share Your Story</div>
+          <div class="feature-desc">Create a compelling profile that connects supporters with your mission and ministry calling.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📝</span>
+          <div class="feature-title">Post Updates</div>
+          <div class="feature-desc">Share ministry highlights, challenges, and victories with your supporter community.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🙏</span>
+          <div class="feature-title">Request Prayer</div>
+          <div class="feature-desc">Share prayer needs with supporters who are committed to lifting your ministry in prayer.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💬</span>
+          <div class="feature-title">Connect Directly</div>
+          <div class="feature-desc">Receive messages of encouragement and build meaningful relationships with supporters.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="next-steps">
+        <h3>🚀 What Happens Next</h3>
+        <ol class="step-list">
+          <li>Our team will review your application for authenticity and safety</li>
+          <li>You'll receive an email notification once your account is approved</li>
+          <li>Set up your missionary profile with your story, photos, and ministry details</li>
+          <li>Start sharing updates and prayer requests with your growing supporter community</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Join a Community of Supported Missionaries</h2>
+      <p>
+        You're joining hundreds of missionaries who have discovered the power of having a dedicated support 
+        community. Our missionaries report feeling more encouraged, better supported, and more effective 
+        in their ministry through the connections made on this platform.
+      </p>
+      <p>
+        <strong>Benefits you'll experience:</strong>
+      </p>
+      <ul>
+        <li>Regular prayer support from dedicated supporters</li>
+        <li>Encouragement during difficult seasons of ministry</li>
+        <li>Increased visibility for your ministry work</li>
+        <li>Connection with other missionaries facing similar challenges</li>
+        <li>A platform to celebrate God's goodness in your ministry</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>While You Wait for Approval</h2>
+      <p>
+        While your account is being reviewed, take some time to explore the platform, read other missionaries' 
+        stories, and get familiar with how the community works. You can also start thinking about:
+      </p>
+      <ul>
+        <li>How you'd like to introduce yourself to supporters</li>
+        <li>Photos that capture your ministry context</li>
+        <li>Your current prayer needs and ministry updates</li>
+        <li>Ways you'd like supporters to be involved in your ministry</li>
+      </ul>
+      
+      <a href="<%= missionaries_url %>" class="btn btn-secondary">Explore Other Missionaries</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>
+      We're honored to support your ministry! Watch for your approval email.<br>
+      <a href="<%= root_url %>">Visit Website</a> | 
+      <a href="#">Contact Support</a>
+    </p>
+    <p style="margin-top: 20px; color: #9ca3af;">
+      © <%= Date.current.year %> Missionary Platform. Empowering missionaries worldwide.
+    </p>
+  </div>
+</body>
+</html>

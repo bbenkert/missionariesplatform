@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .header p {
+      margin: 10px 0 0 0;
+      opacity: 0.9;
+      font-size: 16px;
+    }
+    .content {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .section {
+      padding: 30px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section h2 {
+      color: #1f2937;
+      font-size: 22px;
+      margin: 0 0 20px 0;
+      font-weight: 600;
+    }
+    .update-card, .prayer-card {
+      background: #f9fafb;
+      border-left: 4px solid #3b82f6;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .prayer-card {
+      border-left-color: #ef4444;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #1f2937;
+    }
+    .card-meta {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 15px;
+    }
+    .card-content {
+      color: #374151;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 10px 5px 10px 0;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    .btn-prayer {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    .stats {
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .stats-grid {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+    .stat-item {
+      flex: 1;
+    }
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: #3b82f6;
+      display: block;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 5px;
+    }
+    .footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+    .urgency-badge {
+      display: inline-block;
+      background: #fef2f2;
+      color: #dc2626;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .header { padding: 20px 15px; }
+      .section { padding: 20px 15px; }
+      .stats-grid { flex-direction: column; }
+      .stat-item { margin-bottom: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Your Weekly Mission Update</h1>
+    <p>Connecting hearts worldwide through prayer and support</p>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <h2>Hello, <%= user_name %>!</h2>
+      <p>Here's what's been happening with the <%= followed_count %> missionaries you're following this week:</p>
+      
+      <div class="stats">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number"><%= recent_updates.count %></span>
+            <div class="stat-label">New Updates</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number"><%= urgent_prayers.count %></span>
+            <div class="stat-label">Urgent Prayers</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number"><%= followed_count %></span>
+            <div class="stat-label">Missionaries Followed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if recent_updates.any? %>
+      <div class="section">
+        <h2>📝 Recent Updates</h2>
+        <% recent_updates.each do |update| %>
+          <div class="update-card">
+            <div class="card-title"><%= update.title %></div>
+            <div class="card-meta">
+              By <%= update.missionary_profile.user.display_name %> • 
+              <%= update.published_at.strftime("%B %d, %Y") %>
+            </div>
+            <div class="card-content">
+              <%= truncate(strip_tags(update.body), length: 200) %>
+            </div>
+            <a href="<%= missionary_update_url(update) %>" class="btn">Read Full Update</a>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if urgent_prayers.any? %>
+      <div class="section">
+        <h2>🙏 Urgent Prayer Requests</h2>
+        <% urgent_prayers.each do |prayer| %>
+          <div class="prayer-card">
+            <div class="card-title">
+              <%= prayer.title %>
+              <span class="urgency-badge">Urgent</span>
+            </div>
+            <div class="card-meta">
+              By <%= prayer.missionary_profile.user.display_name %> • 
+              <%= prayer.created_at.strftime("%B %d, %Y") %>
+            </div>
+            <div class="card-content">
+              <%= truncate(prayer.body, length: 200) %>
+            </div>
+            <a href="<%= prayer_request_url(prayer) %>" class="btn btn-prayer">Pray Now</a>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="section">
+      <h2>🌍 Continue Your Support</h2>
+      <p>Your prayers and encouragement make a real difference in the lives of missionaries around the world.</p>
+      <a href="<%= dashboard_url %>" class="btn">Visit Your Dashboard</a>
+      <a href="<%= missionaries_url %>" class="btn">Discover More Missionaries</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>
+      You're receiving this because you follow missionaries on our platform.<br>
+      <a href="<%= unsubscribe_url %>">Unsubscribe</a> | 
+      <a href="<%= root_url %>">Visit Website</a>
+    </p>
+    <p style="margin-top: 20px; color: #9ca3af;">
+      © <%= Date.current.year %> Missionary Platform. Connecting hearts worldwide.
+    </p>
+  </div>
+</body>
+</html>

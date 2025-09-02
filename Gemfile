@@ -43,6 +43,7 @@ gem 'pagy', '~> 6.0'
 
 # Email
 gem 'mail', '~> 2.8'
+gem 'resend', '~> 0.8'
 
 # Time zone support
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
