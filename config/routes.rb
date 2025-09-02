@@ -31,6 +31,13 @@ Rails.application.routes.draw do
     resources :updates, except: [:index]
   end
 
+  # Prayer requests
+  resources :prayer_requests do
+    member do
+      post :pray
+    end
+  end
+
   # User dashboard and profile
   get "dashboard", to: "dashboard#index"
   resource :profile, only: [:show, :edit, :update]

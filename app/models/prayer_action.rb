@@ -15,7 +15,9 @@ class PrayerAction < ApplicationRecord
   
   # Class methods
   def self.pray!(user:, prayer_request:)
-    raise ActiveRecord::RecordInvalid.new(new) unless user && prayer_request
+    if user.nil? || prayer_request.nil?
+      raise ActiveRecord::RecordInvalid.new(new(user: user, prayer_request: prayer_request))
+    end
     
     existing = find_by(user: user, prayer_request: prayer_request)
     return existing if existing

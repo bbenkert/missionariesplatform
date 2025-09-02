@@ -1,0 +1,146 @@
+<% content_for :title, "Prayer Requests" %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Prayer Requests</h1>
+    <% if current_user&.missionary_profile %>
+      <%= link_to "New Prayer Request", new_prayer_request_path, 
+          class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+    <% end %>
+  </div>
+
+  <!-- Search and Filter Bar -->
+  <div class="bg-white shadow rounded-lg p-6 mb-8">
+    <%= form_with url: prayer_requests_path, method: :get, class: "space-y-4 md:space-y-0 md:flex md:space-x-4", local: true do |form| %>
+      <div class="flex-1">
+        <%= form.text_field :search, 
+            placeholder: "Search prayer requests...", 
+            value: params[:search],
+            class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+      
+      <div class="flex-shrink-0">
+        <%= form.select :urgency, 
+            options_for_select([
+              ['All Urgency Levels', ''],
+              ['Low', 'low'],
+              ['Medium', 'medium'], 
+              ['High', 'high']
+            ], params[:urgency]),
+            {},
+            { class: "px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+      </div>
+      
+      <div class="flex-shrink-0">
+        <%= form.submit "Search", class: "bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Prayer Requests Grid -->
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <% @prayer_requests.each do |prayer_request| %>
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6">
+          <!-- Urgency Badge -->
+          <div class="flex justify-between items-start mb-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                         <%= case prayer_request.urgency
+                             when 'high' then 'bg-red-100 text-red-800'
+                             when 'medium' then 'bg-yellow-100 text-yellow-800'
+                             else 'bg-green-100 text-green-800'
+                             end %>">
+              <%= prayer_request.urgency.humanize %> Priority
+            </span>
+            <small class="text-gray-500">
+              <%= time_ago_in_words(prayer_request.created_at) %> ago
+            </small>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            <%= link_to prayer_request.title, prayer_request, 
+                class: "hover:text-blue-600 transition-colors" %>
+          </h3>
+
+          <!-- Body Preview -->
+          <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+            <%= truncate(strip_tags(prayer_request.body), length: 120) %>
+          </p>
+
+          <!-- Missionary Info -->
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <img class="h-8 w-8 rounded-full" 
+                   src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(prayer_request.missionary_profile.user.name) %>&background=3B82F6&color=FFFFFF" 
+                   alt="<%= prayer_request.missionary_profile.user.name %>">
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-900">
+                <%= prayer_request.missionary_profile.user.name %>
+              </p>
+              <p class="text-sm text-gray-500">
+                <%= prayer_request.missionary_profile.ministry_focus %>
+              </p>
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <% if prayer_request.tags.present? %>
+            <div class="flex flex-wrap gap-1 mb-4">
+              <% prayer_request.tags.each do |tag| %>
+                <%= link_to tag, prayer_requests_path(tag: tag), 
+                    class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded hover:bg-gray-200" %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Prayer Count and Actions -->
+          <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+            <span class="text-sm text-gray-500">
+              <%= pluralize(prayer_request.prayer_count, 'prayer') %>
+            </span>
+            
+            <div class="flex space-x-2">
+              <%= link_to "View", prayer_request, 
+                  class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+              
+              <% if prayer_request.prayed_by?(current_user) %>
+                <span class="text-green-600 text-sm font-medium">✓ Prayed</span>
+              <% else %>
+                <%= link_to "Pray", pray_prayer_request_path(prayer_request), 
+                    method: :post,
+                    class: "bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-1 px-3 rounded",
+                    data: { confirm: "Would you like to pray for this request?" } %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @prayer_requests.empty? %>
+    <div class="text-center py-12">
+      <div class="mx-auto h-12 w-12 text-gray-400">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+      </div>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No prayer requests found</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        <% if params[:search].present? || params[:tag].present? || params[:urgency].present? %>
+          Try adjusting your search criteria.
+        <% else %>
+          Be the first to share a prayer request with the community.
+        <% end %>
+      </p>
+      <% if current_user&.missionary_profile && params[:search].blank? && params[:tag].blank? %>
+        <div class="mt-6">
+          <%= link_to "Create Prayer Request", new_prayer_request_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,181 @@
+<% content_for :title, @prayer_request.title %>
+
+<div class="container mx-auto px-4 py-8">
+  <!-- Back Link -->
+  <div class="mb-6">
+    <%= link_to prayer_requests_path, class: "inline-flex items-center text-blue-600 hover:text-blue-800" do %>
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Back to Prayer Requests
+    <% end %>
+  </div>
+
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <!-- Urgency Badge -->
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mb-3
+                       <%= case @prayer_request.urgency
+                           when 'high' then 'bg-red-100 text-red-800'
+                           when 'medium' then 'bg-yellow-100 text-yellow-800'
+                           else 'bg-green-100 text-green-800'
+                           end %>">
+            <%= @prayer_request.urgency.humanize %> Priority
+          </span>
+          
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">
+            <%= @prayer_request.title %>
+          </h1>
+          
+          <p class="text-gray-600">
+            Posted <%= time_ago_in_words(@prayer_request.created_at) %> ago
+          </p>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex space-x-2 ml-4">
+          <% if @prayer_request.missionary_profile == current_user&.missionary_profile %>
+            <%= link_to "Edit", edit_prayer_request_path(@prayer_request), 
+                class: "bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded" %>
+            <%= link_to "Delete", @prayer_request, 
+                method: :delete,
+                data: { confirm: "Are you sure you want to delete this prayer request?" },
+                class: "bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="px-6 py-6">
+      <!-- Missionary Profile -->
+      <div class="flex items-center mb-6 p-4 bg-gray-50 rounded-lg">
+        <div class="flex-shrink-0">
+          <img class="h-12 w-12 rounded-full" 
+               src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(@prayer_request.missionary_profile.user.name) %>&background=3B82F6&color=FFFFFF" 
+               alt="<%= @prayer_request.missionary_profile.user.name %>">
+        </div>
+        <div class="ml-4 flex-1">
+          <h3 class="text-lg font-medium text-gray-900">
+            <%= @prayer_request.missionary_profile.user.name %>
+          </h3>
+          <p class="text-gray-600">
+            <%= @prayer_request.missionary_profile.ministry_focus %>
+          </p>
+          <% if @prayer_request.missionary_profile.user.organization %>
+            <p class="text-sm text-gray-500">
+              <%= @prayer_request.missionary_profile.user.organization.name %>
+            </p>
+          <% end %>
+        </div>
+        <div class="ml-4">
+          <%= link_to "View Profile", missionary_path(@prayer_request.missionary_profile), 
+              class: "text-blue-600 hover:text-blue-800 font-medium" %>
+        </div>
+      </div>
+
+      <!-- Prayer Request Body -->
+      <div class="prose max-w-none mb-6">
+        <%= simple_format(@prayer_request.body) %>
+      </div>
+
+      <!-- Tags -->
+      <% if @prayer_request.tags.present? %>
+        <div class="mb-6">
+          <h4 class="text-sm font-medium text-gray-900 mb-2">Tags:</h4>
+          <div class="flex flex-wrap gap-2">
+            <% @prayer_request.tags.each do |tag| %>
+              <%= link_to tag, prayer_requests_path(tag: tag), 
+                  class: "inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Prayer Action Section -->
+      <div class="border-t border-gray-200 pt-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-gray-900">
+                <%= @prayer_request.prayer_count %>
+              </div>
+              <div class="text-sm text-gray-500">
+                <%= pluralize(@prayer_request.prayer_count, 'prayer') %>
+              </div>
+            </div>
+            
+            <% if @prayer_request.praying_users.any? %>
+              <div class="flex -space-x-2 overflow-hidden">
+                <% @prayer_request.praying_users.limit(5).each do |user| %>
+                  <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" 
+                       src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(user.name) %>&background=3B82F6&color=FFFFFF" 
+                       alt="<%= user.name %>"
+                       title="<%= user.name %> prayed">
+                <% end %>
+                <% if @prayer_request.praying_users.count > 5 %>
+                  <span class="flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white bg-gray-500 text-xs font-medium text-white">
+                    +<%= @prayer_request.praying_users.count - 5 %>
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Pray Button -->
+          <div>
+            <% if @has_prayed %>
+              <div class="flex items-center text-green-600">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="font-medium">You prayed for this request</span>
+              </div>
+              <p class="text-sm text-gray-500 mt-1">
+                You prayed <%= time_ago_in_words(@prayer_action.created_at) %> ago
+              </p>
+            <% else %>
+              <%= form_with url: pray_prayer_request_path(@prayer_request), method: :post, local: true do |form| %>
+                <%= form.submit "🙏 I'll Pray for This", 
+                    class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors",
+                    data: { confirm: "Thank you for choosing to pray for #{@prayer_request.missionary_profile.user.name}. Would you like to record your prayer?" } %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Prayer Actions -->
+  <% if @prayer_request.prayer_actions.any? %>
+    <div class="mt-8 bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Recent Prayers</h2>
+      </div>
+      <div class="px-6 py-4">
+        <div class="space-y-3">
+          <% @prayer_request.prayer_actions.recent.limit(10).includes(:user).each do |prayer_action| %>
+            <div class="flex items-center">
+              <img class="h-8 w-8 rounded-full" 
+                   src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(prayer_action.user.name) %>&background=3B82F6&color=FFFFFF" 
+                   alt="<%= prayer_action.user.name %>">
+              <div class="ml-3">
+                <p class="text-sm text-gray-900">
+                  <span class="font-medium"><%= prayer_action.user.name %></span> 
+                  prayed for this request
+                </p>
+                <p class="text-xs text-gray-500">
+                  <%= time_ago_in_words(prayer_action.created_at) %> ago
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
