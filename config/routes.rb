@@ -1,20 +1,9 @@
 Rails.application.routes.draw do
+  devise_for :users
   # Health check endpoint
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Authentication routes
-  get "sign_in", to: "sessions#new"
-  post "sign_in", to: "sessions#create"
-  delete "sign_out", to: "sessions#destroy"
   
-  get "sign_up", to: "registrations#new"
-  post "sign_up", to: "registrations#create"
-
-  # Password reset routes
-  get "password/reset", to: "passwords#new"
-  post "password/reset", to: "passwords#create"
-  get "password/reset/edit", to: "passwords#edit"
-  patch "password/reset/edit", to: "passwords#update"
 
   # Root route
   root "home#index"

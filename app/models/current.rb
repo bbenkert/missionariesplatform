@@ -3,6 +3,6 @@ class Current < ActiveSupport::CurrentAttributes
 
   def user=(user)
     super
-    Time.zone = user&.time_zone
+    Time.zone = user&.time_zone if user&.respond_to?(:time_zone)
   end
 end

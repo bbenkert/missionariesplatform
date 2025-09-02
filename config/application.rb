@@ -25,7 +25,9 @@ module MissionaryPlatform
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Active Job configuration
-    config.active_job.queue_adapter = :sidekiq
+    # Disable background jobs for now
+    # config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :inline
 
     # Generator configurations
     config.generators do |g|

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_024958) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_034428) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -100,10 +100,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_024958) do
     t.bigint "user_id", null: false
     t.text "bio"
     t.string "ministry_focus"
-    t.string "organization"
     t.string "country"
     t.string "city"
-    t.text "prayer_requests"
     t.text "giving_links"
     t.string "website_url"
     t.string "social_media_links"
@@ -122,7 +120,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_024958) do
     t.integer "safety_mode", default: 0, null: false
     t.index ["country"], name: "index_missionary_profiles_on_country"
     t.index ["ministry_focus"], name: "index_missionary_profiles_on_ministry_focus"
-    t.index ["organization"], name: "index_missionary_profiles_on_organization"
     t.index ["organization_id"], name: "index_missionary_profiles_on_organization_id"
     t.index ["public_profile_level"], name: "index_missionary_profiles_on_public_profile_level"
     t.index ["safety_mode"], name: "index_missionary_profiles_on_safety_mode"
@@ -163,6 +160,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_024958) do
     t.string "contact_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
     t.index ["name"], name: "index_organizations_on_name"
     t.index ["name"], name: "index_organizations_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["settings"], name: "index_organizations_on_settings", using: :gin
@@ -216,20 +214,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_024958) do
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "name", null: false
-    t.string "password_digest", null: false
+    t.string "encrypted_password", null: false
     t.integer "role", default: 0
     t.integer "status", default: 0
     t.boolean "is_active", default: true
-    t.string "password_reset_token"
-    t.datetime "password_reset_sent_at"
-    t.datetime "last_sign_in_at"
-    t.string "last_sign_in_ip"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "current_sign_in_at"
+    t.string "current_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
-    t.index ["password_reset_token"], name: "index_users_on_password_reset_token", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
     t.index ["status"], name: "index_users_on_status"
   end

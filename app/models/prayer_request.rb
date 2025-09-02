@@ -9,8 +9,8 @@ class PrayerRequest < ApplicationRecord
   enum :urgency, { low: 0, medium: 1, high: 2 }, prefix: true
   
   # Validations
-  validates :title, presence: true
-  validates :body, presence: true
+  validates :title, presence: true, length: { maximum: 255 }
+  validates :body, presence: true, length: { maximum: 5000 }
   validates :status, presence: true
   validates :urgency, presence: true
   
@@ -18,7 +18,11 @@ class PrayerRequest < ApplicationRecord
   scope :published, -> { where(status: :open) }
   scope :recent, -> { order(created_at: :desc) }
   scope :urgent, -> { where(urgency: :high) }
-  scope :by_tags, ->(tags) { where("tags @> ?", "{#{tags.join(',')}}") }
+  scope :by_tags, ->(tags) do
+    tags.reduce(all) do |scope, tag|
+      scope.where('tags @> ?', [tag].to_json)
+    end
+  end
   scope :visible_to, ->(user) do
     # For public listing, only show prayer requests from public_mode missionary profiles.
     # More complex visibility rules (e.g., for followers or admins) will be handled by Pundit policies.

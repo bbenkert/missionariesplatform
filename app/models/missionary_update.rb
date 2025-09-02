@@ -69,7 +69,8 @@ class MissionaryUpdate < ApplicationRecord
   private
 
   def notify_followers
-    NotificationJob.perform_later('update_published', self.id)
+    # TODO: Implement notification system without background jobs
+    # NotificationJob.perform_later('update_published', self.id)
   end
 
   def update_tsvector

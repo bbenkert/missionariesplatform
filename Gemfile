@@ -33,6 +33,7 @@ gem 'image_processing', '~> 1.2'
 
 # Authentication (Rails 8 built-in)
 gem 'bcrypt', '~> 3.1.7'
+gem 'devise'
 
 # Authorization
 gem 'pundit', '~> 2.3'
@@ -84,4 +85,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver", "~> 4.10"
   gem "webdrivers", "~> 5.3"
+  gem "rails-controller-testing"
 end

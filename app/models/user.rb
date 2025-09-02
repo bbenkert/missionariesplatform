@@ -1,15 +1,11 @@
 class User < ApplicationRecord
-  # Authentication methods for models
-  has_secure_password
-
-  validates :password, length: { minimum: 8 }, if: :password_required?
-  validates :password_confirmation, presence: true, if: :password_required?
-
-  # Generate password reset token
-  before_save :downcase_email
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
+  
 
   # Validations
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :name, presence: true
 
   # Enums (these automatically validate the values and generate helper methods)
@@ -17,17 +13,32 @@ class User < ApplicationRecord
   enum :status, pending: 0, approved: 1, flagged: 2, suspended: 3
 
   # Associations
+  belongs_to :organization, optional: true
   has_one :missionary_profile, dependent: :destroy
   has_many :missionary_updates, dependent: :destroy
+  
+  # Prayer system
+  has_many :prayer_requests, dependent: :destroy
+  has_many :prayer_actions, dependent: :destroy
+  has_many :prayed_for_requests, through: :prayer_actions, source: :prayer_request
+  
+  # Following system (new polymorphic follows replacing old supporter_followings)
+  has_many :follows, dependent: :destroy
+  has_many :followed_missionaries, -> { where(follows: { followable_type: 'MissionaryProfile' }) }, 
+           through: :follows, source: :followable, source_type: 'MissionaryProfile'
+  has_many :followed_organizations, -> { where(follows: { followable_type: 'Organization' }) },
+           through: :follows, source: :followable, source_type: 'Organization'
+  
+  # Legacy supporter_followings (maintain for migration period)
   has_many :supporter_followings, foreign_key: 'supporter_id', dependent: :destroy
-  has_many :followed_missionaries, through: :supporter_followings, source: :missionary
+  has_many :legacy_followed_missionaries, through: :supporter_followings, source: :missionary
   has_many :followers, class_name: 'SupporterFollowing', foreign_key: 'missionary_id', dependent: :destroy
   has_many :supporter_users, through: :followers, source: :supporter
   
   # Messaging associations
   has_many :sent_conversations, class_name: 'Conversation', foreign_key: 'sender_id', dependent: :destroy
   has_many :received_conversations, class_name: 'Conversation', foreign_key: 'recipient_id', dependent: :destroy
-  has_many :messages, dependent: :destroy
+  has_many :messages, foreign_key: 'sender_id', dependent: :destroy
 
   # File attachments
   has_one_attached :avatar
@@ -98,50 +109,7 @@ class User < ApplicationRecord
     missionary? && approved? && is_active?
   end
 
-  # Authentication methods
-  def self.authenticate(email, password)
-    user = find_by(email: email.downcase.strip)
-    return nil unless user&.authenticate(password)
-    user
-  end
-
-  def self.authenticate_with_email_and_password(email, password)
-    user = find_by(email: email.downcase.strip)
-    return nil unless user&.authenticate(password)
-    return nil unless user.active?
-    user
-  end
-
-  def self.find_by_password_reset_token(token)
-    find_by(password_reset_token: token, password_reset_sent_at: 24.hours.ago..)
-  end
-
-  def generate_password_reset_token
-    self.password_reset_token = SecureRandom.urlsafe_base64
-    self.password_reset_sent_at = Time.current
-  end
-
-  def clear_password_reset_token!
-    update!(password_reset_token: nil, password_reset_sent_at: nil)
-  end
-
-  def password_reset_expired?
-    password_reset_sent_at < 24.hours.ago
-  end
-
-  def active?
-    approved? && is_active?
-  end
-
   private
-
-  def password_required?
-    password_digest.blank? || !password.blank?
-  end
-
-  def downcase_email
-    self.email = email.downcase.strip if email.present?
-  end
 
   def create_missionary_profile_if_needed
     return unless missionary?
