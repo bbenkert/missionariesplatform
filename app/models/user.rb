@@ -18,7 +18,7 @@ class User < ApplicationRecord
   has_many :missionary_updates, dependent: :destroy
   
   # Prayer system
-  has_many :prayer_requests, dependent: :destroy
+  has_many :prayer_requests, through: :missionary_profile, dependent: :destroy
   has_many :prayer_actions, dependent: :destroy
   has_many :prayed_for_requests, through: :prayer_actions, source: :prayer_request
   

@@ -84,7 +84,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # Sidekiq Web UI (for admins only)
-  require 'sidekiq/web'
-  mount Sidekiq::Web => '/sidekiq'
+  # Sidekiq Web UI disabled - using async queue adapter
+  # require 'sidekiq/web'
+  # mount Sidekiq::Web => '/sidekiq'
 end

@@ -22,10 +22,10 @@ gem 'stimulus-rails'
 gem 'jbuilder'
 
 # Redis for ActionCable and caching
-gem 'redis', '~> 5.0'
+# gem 'redis', '~> 5.0'
 
-# Background jobs
-gem 'sidekiq', '~> 7.0'
+# Background job processing
+# gem 'sidekiq', '~> 7.0'
 
 # File uploads and image processing
 gem 'image_processing', '~> 1.2'

@@ -26,7 +26,8 @@ module MissionaryPlatform
 
     # Active Job configuration
     # Disable background jobs for now
-    # config.active_job.queue_adapter = :sidekiq
+    # Use async queue adapter instead of Sidekiq
+    config.active_job.queue_adapter = :async
     config.active_job.queue_adapter = :inline
 
     # Generator configurations
