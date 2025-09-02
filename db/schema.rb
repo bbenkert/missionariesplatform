@@ -10,9 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_26_000008) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_024940) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
+  enable_extension "pgcrypto"
+  enable_extension "unaccent"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -66,6 +70,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_000008) do
     t.index ["updated_at"], name: "index_conversations_on_updated_at"
   end
 
+  create_table "follows", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "followable_type", null: false
+    t.bigint "followable_id", null: false
+    t.boolean "notifications_enabled", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["followable_type", "followable_id"], name: "index_follows_on_followable"
+    t.index ["followable_type", "followable_id"], name: "index_follows_on_followable_type_and_followable_id"
+    t.index ["user_id", "followable_type", "followable_id"], name: "index_follows_on_user_and_followable", unique: true
+    t.index ["user_id"], name: "index_follows_on_user_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.bigint "conversation_id", null: false
     t.bigint "sender_id", null: false
@@ -95,9 +112,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_000008) do
     t.boolean "accepting_messages", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
+    t.boolean "sensitive_flag", default: false
+    t.integer "public_profile_level", default: 0
+    t.string "pseudonym"
+    t.string "public_region"
+    t.jsonb "safety_options", default: {}
+    t.bigint "organization_id"
+    t.integer "safety_mode", default: 0, null: false
     t.index ["country"], name: "index_missionary_profiles_on_country"
     t.index ["ministry_focus"], name: "index_missionary_profiles_on_ministry_focus"
     t.index ["organization"], name: "index_missionary_profiles_on_organization"
+    t.index ["organization_id"], name: "index_missionary_profiles_on_organization_id"
+    t.index ["public_profile_level"], name: "index_missionary_profiles_on_public_profile_level"
+    t.index ["safety_mode"], name: "index_missionary_profiles_on_safety_mode"
+    t.index ["safety_options"], name: "index_missionary_profiles_on_safety_options", using: :gin
+    t.index ["sensitive_flag"], name: "index_missionary_profiles_on_sensitive_flag"
+    t.index ["slug"], name: "index_missionary_profiles_on_slug", unique: true
     t.index ["user_id"], name: "index_missionary_profiles_on_user_id", unique: true
   end
 
@@ -112,12 +143,58 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_000008) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "visibility", default: 0
+    t.tsvector "tsvector"
     t.index ["is_urgent"], name: "index_missionary_updates_on_is_urgent"
     t.index ["published_at"], name: "index_missionary_updates_on_published_at"
     t.index ["status"], name: "index_missionary_updates_on_status"
     t.index ["tags"], name: "index_missionary_updates_on_tags"
+    t.index ["tsvector"], name: "index_missionary_updates_on_tsvector", using: :gin
     t.index ["update_type"], name: "index_missionary_updates_on_update_type"
     t.index ["user_id"], name: "index_missionary_updates_on_user_id"
+    t.index ["visibility"], name: "index_missionary_updates_on_visibility"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.jsonb "settings", default: {}
+    t.string "contact_email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_organizations_on_name"
+    t.index ["settings"], name: "index_organizations_on_settings", using: :gin
+    t.index ["slug"], name: "index_organizations_on_slug", unique: true
+  end
+
+  create_table "prayer_actions", force: :cascade do |t|
+    t.bigint "prayer_request_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_prayer_actions_on_created_at"
+    t.index ["prayer_request_id", "user_id"], name: "index_prayer_actions_on_prayer_request_id_and_user_id", unique: true
+    t.index ["prayer_request_id"], name: "index_prayer_actions_on_prayer_request_id"
+    t.index ["user_id"], name: "index_prayer_actions_on_user_id"
+  end
+
+  create_table "prayer_requests", force: :cascade do |t|
+    t.bigint "missionary_profile_id", null: false
+    t.string "title", null: false
+    t.text "body"
+    t.jsonb "tags"
+    t.integer "status", default: 0
+    t.integer "urgency", default: 0
+    t.datetime "published_at"
+    t.tsvector "tsvector"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["missionary_profile_id"], name: "index_prayer_requests_on_missionary_profile_id"
+    t.index ["published_at"], name: "index_prayer_requests_on_published_at"
+    t.index ["status"], name: "index_prayer_requests_on_status"
+    t.index ["tags"], name: "index_prayer_requests_on_tags", using: :gin
+    t.index ["tsvector"], name: "index_prayer_requests_on_tsvector", using: :gin
+    t.index ["urgency"], name: "index_prayer_requests_on_urgency"
   end
 
   create_table "supporter_followings", force: :cascade do |t|
@@ -146,7 +223,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_000008) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["password_reset_token"], name: "index_users_on_password_reset_token", unique: true
     t.index ["role"], name: "index_users_on_role"
     t.index ["status"], name: "index_users_on_status"
@@ -156,10 +235,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_000008) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
+  add_foreign_key "follows", "users"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users", column: "sender_id"
+  add_foreign_key "missionary_profiles", "organizations"
   add_foreign_key "missionary_profiles", "users"
   add_foreign_key "missionary_updates", "users"
+  add_foreign_key "prayer_actions", "prayer_requests"
+  add_foreign_key "prayer_actions", "users"
+  add_foreign_key "prayer_requests", "missionary_profiles"
   add_foreign_key "supporter_followings", "users", column: "missionary_id"
   add_foreign_key "supporter_followings", "users", column: "supporter_id"
+  add_foreign_key "users", "organizations"
 end
