@@ -1,5 +1,16 @@
 <% content_for :title, @missionary.name %>
 
+<% content_for :head do %>
+  <meta property="og:title" content="<%= @missionary.name %>" />
+  <meta property="og:description" content="<%= truncate(@missionary.missionary_profile.bio, length: 160) %>" />
+  <% if @missionary.avatar.attached? %>
+    <meta property="og:image" content="<%= url_for(@missionary.avatar) %>" />
+  <% end %>
+  <meta property="og:url" content="<%= missionary_url(@missionary) %>" />
+  <meta property="og:type" content="profile" />
+  <link rel="canonical" href="<%= missionary_url(@missionary) %>" />
+<% end %>
+
 <div class="bg-white">
   <!-- Hero Section -->
   <div class="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white">
