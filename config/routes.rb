@@ -48,7 +48,7 @@ Rails.application.routes.draw do
 
   # Missionary routes
   resources :missionaries, only: [:index, :show] do
-    resources :updates, except: [:index]
+    resources :updates
   end
 
   # Prayer requests
@@ -59,14 +59,15 @@ Rails.application.routes.draw do
   end
 
   # Follow system
-  resources :follows, only: [:create, :destroy]
+  post "follows", to: "follows#create"
+  delete "follows", to: "follows#destroy"
 
   # User dashboard and profile
   get "dashboard", to: "dashboard#index"
   resource :profile, only: [:show, :edit, :update]
 
   # Messaging system
-  resources :conversations, only: [:index, :show, :create] do
+  resources :conversations, only: [:index, :show, :new, :create] do
     resources :messages, only: [:create]
     member do
       patch :block

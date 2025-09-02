@@ -1,0 +1,191 @@
+<% content_for :title, @update.title %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Breadcrumb Navigation -->
+  <nav class="mb-8">
+    <div class="flex items-center space-x-2 text-sm text-gray-600">
+      <%= link_to "Missionaries", missionaries_path, class: "hover:text-blue-600" %>
+      <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <%= link_to @missionary.name, missionary_path(@missionary), class: "hover:text-blue-600" %>
+      <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <%= link_to "Updates", missionary_updates_path(@missionary), class: "hover:text-blue-600" %>
+      <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <span class="text-gray-500">Update</span>
+    </div>
+  </nav>
+
+  <!-- Back to Updates Link -->
+  <div class="mb-6">
+    <%= link_to missionary_updates_path(@missionary), class: "inline-flex items-center text-blue-600 hover:text-blue-800" do %>
+      <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Back to Updates
+    <% end %>
+  </div>
+
+  <!-- Update Content -->
+  <article class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <!-- Update Header -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center space-x-4 min-w-0 flex-1">
+          <!-- Missionary Avatar -->
+          <% if @missionary.avatar.attached? %>
+            <%= image_tag @missionary.avatar, class: "w-12 h-12 rounded-full object-cover flex-shrink-0" %>
+          <% else %>
+            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          <% end %>
+          
+          <div class="min-w-0 flex-1">
+            <h4 class="text-sm font-medium text-gray-900">
+              <%= link_to @missionary.name, missionary_path(@missionary), class: "hover:text-blue-600" %>
+            </h4>
+            <p class="text-sm text-gray-500">
+              <% if @update.published_at %>
+                <%= @update.published_at.strftime("%B %d, %Y at %l:%M %p") %>
+              <% else %>
+                <%= @update.created_at.strftime("%B %d, %Y at %l:%M %p") %>
+              <% end %>
+            </p>
+          </div>
+        </div>
+
+        <!-- Update Type and Status Badges -->
+        <div class="flex items-center space-x-2 flex-shrink-0">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                       <%= @update.update_type == 'prayer_request' ? 'bg-purple-100 text-purple-800' :
+                           @update.update_type == 'praise_report' ? 'bg-green-100 text-green-800' :
+                           @update.update_type == 'ministry_news' ? 'bg-blue-100 text-blue-800' :
+                           'bg-gray-100 text-gray-800' %>">
+            <%= @update.update_type.humanize %>
+          </span>
+          <% if @update.is_urgent? %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              Urgent
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Update Title -->
+      <h1 class="text-2xl font-bold text-gray-900 mt-4"><%= @update.title %></h1>
+    </div>
+
+    <!-- Update Content -->
+    <div class="p-6">
+      <div class="prose max-w-none">
+        <%= @update.content %>
+      </div>
+
+      <!-- Tags -->
+      <% if @update.tags_list.any? %>
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <div class="flex flex-wrap gap-2">
+            <% @update.tags_list.each do |tag| %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                #<%= tag %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Images -->
+      <% if @update.images.attached? %>
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% @update.images.each do |image| %>
+              <div class="aspect-w-16 aspect-h-12">
+                <%= image_tag image, class: "w-full h-48 object-cover rounded-lg" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <!-- Edit/Delete Actions (if user is authorized) -->
+          <% if current_user&.admin? || (current_user == @missionary) %>
+            <%= link_to "Edit Update", edit_missionary_update_path(@missionary, @update), 
+                       class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+          <% end %>
+          <% if current_user&.admin? || (current_user == @missionary) %>
+            <%= link_to "Delete Update", missionary_update_path(@missionary, @update), 
+                       method: :delete,
+                       data: { confirm: "Are you sure you want to delete this update?" },
+                       class: "text-sm text-red-600 hover:text-red-800 font-medium" %>
+          <% end %>
+        </div>
+
+        <!-- Share/Social Actions -->
+        <div class="flex items-center space-x-3">
+          <span class="text-sm text-gray-500">Share:</span>
+          <!-- Twitter Share -->
+          <%= link_to "https://twitter.com/intent/tweet?text=#{CGI.escape(@update.title)}&url=#{CGI.escape(request.original_url)}", 
+                     target: "_blank", rel: "noopener",
+                     class: "text-gray-400 hover:text-blue-500" do %>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+            </svg>
+          <% end %>
+          
+          <!-- Facebook Share -->
+          <%= link_to "https://www.facebook.com/sharer/sharer.php?u=#{CGI.escape(request.original_url)}", 
+                     target: "_blank", rel: "noopener",
+                     class: "text-gray-400 hover:text-blue-600" do %>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M20 10C20 4.477 15.523 0 10 0S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"></path>
+            </svg>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Related Updates -->
+  <% if @missionary.missionary_updates.published.where.not(id: @update.id).limit(3).any? %>
+    <div class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-6">More from <%= @missionary.name %></h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <% @missionary.missionary_updates.published.where.not(id: @update.id).recent.limit(3).each do |related_update| %>
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                           <%= related_update.update_type == 'prayer_request' ? 'bg-purple-100 text-purple-800' :
+                               related_update.update_type == 'praise_report' ? 'bg-green-100 text-green-800' :
+                               related_update.update_type == 'ministry_news' ? 'bg-blue-100 text-blue-800' :
+                               'bg-gray-100 text-gray-800' %>">
+                <%= related_update.update_type.humanize %>
+              </span>
+              <time class="text-xs text-gray-500">
+                <%= time_ago_in_words(related_update.published_at || related_update.created_at) %> ago
+              </time>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+              <%= link_to related_update.title, missionary_update_path(@missionary, related_update), 
+                         class: "hover:text-blue-600" %>
+            </h3>
+            <p class="text-sm text-gray-600 line-clamp-3">
+              <%= truncate(strip_tags(related_update.content), length: 120) %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

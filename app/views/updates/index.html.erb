@@ -1,0 +1,118 @@
+<% content_for :title, "#{@missionary.name}'s Updates" %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center space-x-4 mb-4">
+      <%= link_to missionary_path(@missionary), class: "text-blue-600 hover:text-blue-800" do %>
+        <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Profile
+      <% end %>
+    </div>
+    
+    <div class="flex items-center space-x-4">
+      <% if @missionary.avatar.attached? %>
+        <%= image_tag @missionary.avatar, class: "w-16 h-16 rounded-full object-cover" %>
+      <% else %>
+        <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+          <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+      <% end %>
+      
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900"><%= @missionary.name %>'s Updates</h1>
+        <p class="text-gray-600"><%= pluralize(@updates.count, 'update') %> total</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Updates List -->
+  <% if @updates.any? %>
+    <div class="space-y-8">
+      <% @updates.each do |update| %>
+        <article class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Update Header -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                           <%= update.update_type == 'prayer_request' ? 'bg-purple-100 text-purple-800' :
+                               update.update_type == 'praise_report' ? 'bg-green-100 text-green-800' :
+                               update.update_type == 'ministry_news' ? 'bg-blue-100 text-blue-800' :
+                               'bg-gray-100 text-gray-800' %>">
+                <%= update.update_type.humanize %>
+              </span>
+              <% if update.is_urgent? %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  Urgent
+                </span>
+              <% end %>
+            </div>
+            <time class="text-sm text-gray-500" datetime="<%= update.published_at&.iso8601 %>">
+              <%= update.published_at ? time_ago_in_words(update.published_at) + " ago" : "Draft" %>
+            </time>
+          </div>
+          
+          <!-- Update Content -->
+          <h2 class="text-xl font-semibold text-gray-900 mb-3">
+            <%= link_to update.title, missionary_update_path(@missionary, update), 
+                       class: "hover:text-blue-600" %>
+          </h2>
+          
+          <div class="prose prose-lg max-w-none text-gray-700 mb-4">
+            <%= truncate(strip_tags(update.content.to_s), length: 500) %>
+          </div>
+          
+          <!-- Update Footer -->
+          <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div class="flex items-center space-x-4">
+              <% if update.tags.present? %>
+                <div class="flex items-center space-x-1">
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                  </svg>
+                  <div class="flex flex-wrap gap-1">
+                    <% update.tags_list.each do |tag| %>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                        <%= tag %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            
+            <%= link_to missionary_update_path(@missionary, update), 
+                       class: "inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium" do %>
+              Read more
+              <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            <% end %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+    
+    <!-- Pagination would go here if needed -->
+    <% if @updates.count >= 20 %>
+      <div class="mt-8 flex justify-center">
+        <p class="text-gray-500 text-sm">More updates pagination could be added here if needed</p>
+      </div>
+    <% end %>
+  <% else %>
+    <!-- Empty State -->
+    <div class="text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">📝</div>
+      <h2 class="text-2xl font-semibold text-gray-900 mb-2">No updates yet</h2>
+      <p class="text-gray-600 max-w-md mx-auto mb-6">
+        <%= @missionary.name %> hasn't posted any updates yet. Check back later for ministry updates, prayer requests, and praise reports.
+      </p>
+      <%= link_to "Back to Profile", missionary_path(@missionary), 
+                 class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100" %>
+    </div>
+  <% end %>
+</div>

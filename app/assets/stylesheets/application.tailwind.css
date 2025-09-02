@@ -1,23 +1,16 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* 
- * Tailwind CSS v4 - Import all utilities
- * This tells Tailwind to scan our content and generate all needed utilities
+/*
+ * Custom component styles for our application
  */
 
-/* Utilities we're using in our views - this helps Tailwind v4 understand what to generate */
-/* 
-bg-gray-50 bg-white bg-red-600 bg-blue-600 bg-gray-800
-text-white text-gray-900 text-gray-500 text-gray-700 text-gray-300 text-blue-600
-hover:bg-red-700 hover:bg-blue-700 hover:text-gray-700 hover:text-white
-px-4 py-2 px-1 py-3 px-3 pt-1 pt-8 py-12
-rounded-md rounded-lg
-text-xl text-lg text-sm
-font-bold font-semibold font-medium
-shadow-lg
-max-w-7xl mx-auto
-flex justify-between items-center space-x-8 space-x-4 space-y-2
-h-16
+html, body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Custom components */
 hidden sm:ml-6 sm:flex sm:items-center
 inline-flex
 border-t border-gray-700

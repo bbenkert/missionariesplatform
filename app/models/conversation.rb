@@ -42,7 +42,7 @@ class Conversation < ApplicationRecord
     where(
       "(sender_id = ? AND recipient_id = ?) OR (sender_id = ? AND recipient_id = ?)",
       user1.id, user2.id, user2.id, user1.id
-    ).first
+    )
   end
 
   def self.find_or_create_between(user1, user2)

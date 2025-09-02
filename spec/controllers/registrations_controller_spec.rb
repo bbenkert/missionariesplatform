@@ -223,5 +223,3 @@ RSpec.describe RegistrationsController, type: :controller do
     end
   end
 end
-
-end

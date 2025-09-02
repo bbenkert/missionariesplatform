@@ -4,7 +4,8 @@ export default {
     "./app/views/**/*.html.erb",
     "./app/helpers/**/*.rb",
     "./app/assets/javascripts/**/*.js",
-    "./app/javascript/**/*.js"
+    "./app/javascript/**/*.js",
+    "./app/assets/stylesheets/**/*.css"
   ],
   theme: {
     extend: {
@@ -12,5 +13,6 @@ export default {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       }
     }
-  }
+  },
+  plugins: []
 }

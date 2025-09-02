@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Script to build TailwindCSS for development
+echo "Building TailwindCSS..."
+docker-compose exec web npm run build
+
+echo "TailwindCSS built successfully!"
+echo ""
+echo "To watch for changes, run: docker-compose exec web npm run build:watch"

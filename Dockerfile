@@ -26,6 +26,9 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
+# Build TailwindCSS
+RUN npm run build
+
 # Precompile assets (this will be done in development via volume mount)
 # RUN rails assets:precompile
 

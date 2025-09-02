@@ -1,9 +1,10 @@
 class FollowsController < ApplicationController
+  include ActionView::RecordIdentifier
   before_action :authenticate_user!
   before_action :set_followable, only: [:create, :destroy]
   
   def create
-    @follow = Follow.follow!(current_user, @followable)
+    @follow = Follow.follow!(user: current_user, followable: @followable)
     
     respond_to do |format|
       format.turbo_stream do
@@ -19,7 +20,7 @@ class FollowsController < ApplicationController
   end
   
   def destroy
-    @follow_count = Follow.unfollow!(current_user, @followable)
+    @follow_count = Follow.unfollow!(user: current_user, followable: @followable)
     
     respond_to do |format|
       format.turbo_stream do

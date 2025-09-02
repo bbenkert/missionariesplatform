@@ -79,6 +79,10 @@ RSpec.configure do |config|
   # Include FactoryBot methods
   config.include FactoryBot::Syntax::Methods
 
+  # Include Devise test helpers
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Devise::Test::ControllerHelpers, type: :controller
+
   # Include Rails authentication helpers for controller tests
   config.include Rails.application.routes.url_helpers
   config.include Rails.application.routes.mounted_helpers

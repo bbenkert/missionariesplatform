@@ -1,0 +1,194 @@
+<% content_for :title, "New Update" %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center space-x-4 mb-4">
+      <%= link_to @missionary, class: "text-blue-600 hover:text-blue-800" do %>
+        <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Profile
+      <% end %>
+    </div>
+    
+    <h1 class="text-3xl font-bold text-gray-900">New Update</h1>
+    <p class="text-gray-600">Share a ministry update, prayer request, or praise report</p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+    <div class="px-6 py-8">
+      <%= form_with model: @update, url: missionary_updates_path(@missionary), local: true, class: "space-y-6" do |form| %>
+        <!-- Error Messages -->
+        <% if @update.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  There <%= @update.errors.count == 1 ? 'was' : 'were' %> 
+                  <%= pluralize(@update.errors.count, 'error') %> with your submission:
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc list-inside space-y-1">
+                    <% @update.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Title -->
+        <div>
+          <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_field :title, 
+              placeholder: "Give your update a clear, descriptive title",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+          <p class="mt-1 text-sm text-gray-500">
+            This will be the main headline for your update (max 255 characters)
+          </p>
+        </div>
+
+        <!-- Update Type -->
+        <div>
+          <%= form.label :update_type, "Update Type", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.select :update_type,
+              [
+                ['General Update - Regular ministry news or personal update', 'general_update'],
+                ['Prayer Request - Asking for prayer support', 'prayer_request'],
+                ['Praise Report - Sharing answered prayers or good news', 'praise_report'],
+                ['Ministry News - Important updates about ministry work', 'ministry_news']
+              ],
+              { prompt: 'Select update type' },
+              { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" } %>
+          <p class="mt-1 text-sm text-gray-500">
+            Choose the category that best describes this update
+          </p>
+        </div>
+
+        <!-- Content -->
+        <div>
+          <%= form.label :content, "Content", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.rich_text_area :content,
+              placeholder: "Share your update, prayer request, or praise report...",
+              class: "w-full min-h-[300px]" %>
+          <p class="mt-1 text-sm text-gray-500">
+            Write your full update content. You can use rich text formatting.
+          </p>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <%= form.label :tags, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_field :tags, 
+              placeholder: "prayer, ministry, missions, teaching",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+          <p class="mt-1 text-sm text-gray-500">
+            Add relevant tags separated by commas to help categorize your update
+          </p>
+        </div>
+
+        <!-- Images -->
+        <div>
+          <%= form.label :images, "Images", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.file_field :images, 
+              multiple: true,
+              accept: "image/*",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+          <p class="mt-1 text-sm text-gray-500">
+            Upload images to accompany your update (optional)
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Status -->
+          <div>
+            <%= form.label :status, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :status,
+                [
+                  ['Draft - Save without publishing', 'draft'],
+                  ['Published - Visible to followers', 'published']
+                ],
+                { selected: 'draft' },
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" } %>
+            <p class="mt-1 text-sm text-gray-500">
+              Control the visibility of your update
+            </p>
+          </div>
+
+          <!-- Visibility -->
+          <div>
+            <%= form.label :visibility, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :visibility,
+                [
+                  ['Public - Visible to everyone', 'public_visibility'],
+                  ['Followers Only - Only your supporters can see this', 'followers_only'],
+                  ['Private - Only you and admins can see this', 'private_visibility']
+                ],
+                { selected: 'public_visibility' },
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" } %>
+            <p class="mt-1 text-sm text-gray-500">
+              Choose who can view this update
+            </p>
+          </div>
+        </div>
+
+        <!-- Urgent Flag -->
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <%= form.check_box :is_urgent, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+          </div>
+          <div class="ml-3">
+            <%= form.label :is_urgent, "Mark as urgent", class: "text-sm font-medium text-gray-700" %>
+            <p class="text-sm text-gray-500">
+              Check this if this update requires immediate attention (such as emergency prayer requests)
+            </p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+          <div class="flex items-center space-x-4">
+            <%= link_to "Cancel", missionary_path(@missionary), 
+                       class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <%= form.submit "Save as Draft", 
+                           name: "commit",
+                           value: "Save as Draft",
+                           class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            <%= form.submit "Publish Update", 
+                           class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Help Text -->
+  <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-blue-800">
+          <strong>Tips for effective updates:</strong>
+          Include specific prayer requests, share recent ministry highlights, and use relevant tags to help supporters find and engage with your content. 
+          Remember to be mindful of security concerns when sharing location details if you're in a sensitive area.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

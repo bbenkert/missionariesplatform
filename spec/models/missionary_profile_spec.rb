@@ -36,12 +36,14 @@ RSpec.describe MissionaryProfile, type: :model do
     end
 
     describe '.by_organization' do
-      let!(:org1_profile) { create(:missionary_profile, organization: 'Organization A') }
-      let!(:org2_profile) { create(:missionary_profile, organization: 'Organization B') }
+      let!(:org1) { create(:organization, name: 'Organization A') }
+      let!(:org2) { create(:organization, name: 'Organization B') }
+      let!(:org1_profile) { create(:missionary_profile, organization: org1) }
+      let!(:org2_profile) { create(:missionary_profile, organization: org2) }
 
       it 'returns profiles from specified organization' do
-        expect(MissionaryProfile.by_organization('Organization A')).to include(org1_profile)
-        expect(MissionaryProfile.by_organization('Organization A')).not_to include(org2_profile)
+        expect(MissionaryProfile.by_organization(org1)).to include(org1_profile)
+        expect(MissionaryProfile.by_organization(org1)).not_to include(org2_profile)
       end
     end
 
@@ -99,27 +101,23 @@ RSpec.describe MissionaryProfile, type: :model do
 
     describe '#ministry_summary' do
       it 'returns ministry focus and organization' do
-        profile = build(:missionary_profile, ministry_focus: 'Evangelism', organization: 'World Missions')
+        org = build(:organization, name: 'World Missions')
+        profile = build(:missionary_profile, ministry_focus: 'Evangelism', organization: org)
         expect(profile.ministry_summary).to eq('Evangelism - World Missions')
       end
     end
 
     describe '#prayer_requests_list' do
       it 'returns array of prayer requests when present' do
-        requests = ["Please pray for our ministry", "Pray for our health", "Pray for our family"]
-        profile = build(:missionary_profile, prayer_requests: requests.join("\n"))
-        expect(profile.prayer_requests_list).to eq(requests)
-      end
-
-      it 'returns empty array when prayer_requests is blank' do
-        profile = build(:missionary_profile, prayer_requests: nil)
-        expect(profile.prayer_requests_list).to eq([])
-      end
-
-      it 'filters out blank lines' do
-        requests = "Please pray for our ministry\n\nPray for our health\n"
-        profile = build(:missionary_profile, prayer_requests: requests)
+        profile = create(:missionary_profile)
+        create(:prayer_request, missionary_profile: profile, body: "Please pray for our ministry")
+        create(:prayer_request, missionary_profile: profile, body: "Pray for our health")
         expect(profile.prayer_requests_list).to eq(["Please pray for our ministry", "Pray for our health"])
+      end
+
+      it 'returns empty array when no prayer requests exist' do
+        profile = create(:missionary_profile)
+        expect(profile.prayer_requests_list).to eq([])
       end
     end
 

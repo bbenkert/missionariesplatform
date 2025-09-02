@@ -9,7 +9,7 @@ class MissionaryProfile < ApplicationRecord
   validates :user, presence: true
   validates :ministry_focus, presence: true
   validates :bio, length: { maximum: 2000 }
-  # validates :organization, presence: true # Removed this line
+  validates :organization, presence: true
   validates :country, presence: true
   validates :safety_mode, presence: true
 
@@ -19,8 +19,9 @@ class MissionaryProfile < ApplicationRecord
 
   # Scopes
   scope :approved, -> { joins(:user).where(users: { status: 'approved' }) }
+  scope :pending, -> { joins(:user).where(users: { status: 'pending' }) }
   scope :by_country, ->(country) { where(country: country) }
-  # scope :by_organization, ->(org) { where(organization: org) } # This scope needs to be updated
+  scope :by_organization, ->(org) { where(organization: org) }
   scope :by_ministry_focus, ->(focus) { where(ministry_focus: focus) }
   scope :public_profiles, -> { where(safety_mode: :public_mode) }
   scope :limited_profiles, -> { where(safety_mode: :limited_mode) }
@@ -40,7 +41,7 @@ class MissionaryProfile < ApplicationRecord
   end
 
   def prayer_requests_list
-    []
+    prayer_requests.pluck(:body)
   end
 
   def giving_links_list

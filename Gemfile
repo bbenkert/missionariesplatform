@@ -13,11 +13,10 @@ gem 'puma', '~> 6.0'
 gem 'pg', '~> 1.1'
 
 # Asset pipeline and styling
-gem 'sprockets-rails'
+gem 'propshaft'
 gem 'importmap-rails'
 gem 'turbo-rails'
 gem 'stimulus-rails'
-gem 'tailwindcss-rails'
 
 # JSON handling
 gem 'jbuilder'
@@ -88,3 +87,5 @@ group :test do
   gem "webdrivers", "~> 5.3"
   gem "rails-controller-testing"
 end
+
+gem "fast-mcp", "~> 1.5"

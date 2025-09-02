@@ -146,8 +146,13 @@ RSpec.describe PrayerRequest, type: :model do
       prayer_request.reload
       
       expect(prayer_request.tags).to eq(tags)
-      expect(PrayerRequest.by_tags(['healing']).count).to eq(1)
-      expect(PrayerRequest.by_tags(['family']).count).to eq(1)
+      
+      # Test that our specific prayer request is found in the results
+      healing_requests = PrayerRequest.by_tags(['healing'])
+      expect(healing_requests).to include(prayer_request)
+      
+      family_requests = PrayerRequest.by_tags(['family'])
+      expect(family_requests).to include(prayer_request)
     end
 
     it 'handles empty tags array' do

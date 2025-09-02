@@ -1,23 +1,8 @@
 module Authentication
   extend ActiveSupport::Concern
 
-  included do
-    before_action :current_user
-    helper_method :current_user, :user_signed_in?
-  end
-
-  private
-
-  def current_user
-    @current_user ||= authenticate_user_from_session
-  end
-
-  def authenticate_user_from_session
-    User.find(session[:user_id]) if session[:user_id]
-  rescue ActiveRecord::RecordNotFound
-    session[:user_id] = nil
-    nil
-  end
+  # This module now works with Devise's authentication
+  # Devise provides current_user method, we just add some helper methods
 
   def user_signed_in?
     current_user.present?
@@ -30,22 +15,17 @@ module Authentication
     end
   end
 
-  def sign_in(user)
-    user.update!(last_sign_in_at: Time.current, last_sign_in_ip: request.remote_ip)
-    session[:user_id] = user.id
-    @current_user = user
-  end
-
-  def sign_out
-    session[:user_id] = nil
-    @current_user = nil
+  def custom_sign_out
+    # Use Devise's sign_out method
+    sign_out(current_user) if current_user
   end
 
   def store_location
-    session[:return_to] = request.fullpath if request.get? && !request.xhr?
+    store_location_for(:user, request.fullpath) if request.get? && !request.xhr?
   end
 
   def redirect_back_or_to(default_path)
-    redirect_to(session.delete(:return_to) || default_path)
+    redirect_to(stored_location_for(:user) || default_path)
+    clear_stored_location_for(:user)
   end
 end

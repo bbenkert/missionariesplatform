@@ -6,8 +6,8 @@ class Admin::DashboardController < ApplicationController
     @total_users = User.count
     @total_missionaries = User.where(role: :missionary).count
     @total_supporters = User.where(role: :supporter).count
-    @approved_missionaries = MissionaryProfile.where(status: :approved).count
-    @pending_missionaries = MissionaryProfile.where(status: :pending).count
+    @approved_missionaries = MissionaryProfile.approved.count
+    @pending_missionaries = MissionaryProfile.pending.count
     @recent_users = User.order(created_at: :desc).limit(5)
     
     # Prayer request statistics
