@@ -18,7 +18,16 @@ Rails.application.routes.draw do
         patch :toggle_visibility
       end
     end
-    resources :users, only: [:index, :show, :update]
+    resources :users, only: [:index, :show, :edit, :update] do
+      collection do
+        patch :bulk_actions
+      end
+      member do
+        patch :approve_missionary
+        patch :suspend
+        patch :activate
+      end
+    end
     resources :messages, only: [:index, :show, :destroy]
     resources :prayer_requests, only: [:index, :show, :update, :destroy] do
       collection do

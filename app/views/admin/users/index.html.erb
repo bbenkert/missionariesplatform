@@ -1,0 +1,380 @@
+<% content_for :title, "User Management" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Enhanced Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            User Management
+          </h1>
+          <p class="mt-2 text-gray-600">
+            Manage all platform users, approve missionaries, and monitor activity
+          </p>
+        </div>
+        <div class="flex space-x-3">
+          <%= link_to "Export Users", "#", 
+              class: "bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" %>
+          <%= link_to "Send Announcement", "#", 
+              class: "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all transform hover:scale-105" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Dashboard -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Users</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @stats[:total_users] %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Supporters</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @stats[:supporters] %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9c0 5-4 9-9 9m0 0a9 9 0 01-9-9m9 9c0-5 4-9 9-9m0 0a9 9 0 019 9"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Missionaries</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @stats[:missionaries] %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Pending</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @stats[:pending_missionaries] %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Active (30d)</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @stats[:active_users] %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">New This Week</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @stats[:new_this_week] %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <%= form_with url: admin_users_path, method: :get, local: true, class: "flex flex-wrap items-center gap-4" do |form| %>
+        <div class="flex-1 min-w-64">
+          <%= form.text_field :search, 
+              value: params[:search],
+              placeholder: "Search users by name or email...",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" %>
+        </div>
+        
+        <div>
+          <%= form.select :role, 
+              options_for_select([
+                ['All Roles', ''],
+                ['Supporters', 'supporter'],
+                ['Missionaries', 'missionary'], 
+                ['Admins', 'admin'],
+                ['Org Admins', 'organization_admin']
+              ], params[:role]),
+              {},
+              { class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" } %>
+        </div>
+        
+        <div>
+          <%= form.select :status, 
+              options_for_select([
+                ['All Statuses', ''],
+                ['Pending', 'pending'],
+                ['Approved', 'approved'],
+                ['Flagged', 'flagged'],
+                ['Suspended', 'suspended']
+              ], params[:status]),
+              {},
+              { class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" } %>
+        </div>
+        
+        <div class="flex space-x-2">
+          <%= form.submit "Filter", 
+              class: "bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" %>
+          <%= link_to "Clear", admin_users_path, 
+              class: "bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">Bulk Actions</h3>
+          <div class="text-sm text-gray-500">
+            Select users below to perform bulk actions
+          </div>
+        </div>
+      </div>
+      
+      <%= form_with url: bulk_actions_admin_users_path, method: :post, local: true, class: "px-6 py-4 flex items-center space-x-4" do |form| %>
+        <%= form.select :bulk_action, 
+            options_for_select([
+              ['Choose Action...', ''],
+              ['Approve Missionaries', 'approve'],
+              ['Suspend Users', 'suspend'],
+              ['Activate Users', 'activate'],
+              ['Delete Users', 'delete']
+            ]),
+            {},
+            { class: "px-4 py-2 border border-gray-300 rounded-lg" } %>
+        
+        <%= form.submit "Apply to Selected", 
+            class: "bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors",
+            confirm: "Are you sure you want to apply this action to the selected users?" %>
+        
+        <span class="text-sm text-gray-600">
+          <span id="selected-count">0</span> users selected
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Users (<%= @users.total_count %>)
+        </h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="w-4 px-6 py-3">
+                <input type="checkbox" id="select-all" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                User
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Role & Status
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Activity
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Joined
+              </th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @users.each do |user| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="w-4 px-6 py-4">
+                  <input type="checkbox" name="user_ids[]" value="<%= user.id %>" 
+                         class="user-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                </td>
+                
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10">
+                      <% if user.avatar.attached? %>
+                        <%= image_tag user.avatar, class: "h-10 w-10 rounded-full object-cover" %>
+                      <% else %>
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 flex items-center justify-center text-white font-semibold">
+                          <%= user.name.first.upcase %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= link_to user.name, admin_user_path(user), class: "hover:text-blue-600 transition-colors" %>
+                      </div>
+                      <div class="text-sm text-gray-500"><%= user.email %></div>
+                    </div>
+                  </div>
+                </td>
+                
+                <td class="px-6 py-4">
+                  <div class="space-y-1">
+                    <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                      <%= case user.role
+                          when 'admin' then 'bg-red-100 text-red-800'
+                          when 'missionary' then 'bg-purple-100 text-purple-800'
+                          when 'supporter' then 'bg-green-100 text-green-800'
+                          when 'organization_admin' then 'bg-blue-100 text-blue-800'
+                          end %>">
+                      <%= user.role.humanize %>
+                    </span>
+                    <br>
+                    <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                      <%= case user.status
+                          when 'pending' then 'bg-yellow-100 text-yellow-800'
+                          when 'approved' then 'bg-green-100 text-green-800'
+                          when 'flagged' then 'bg-red-100 text-red-800'
+                          when 'suspended' then 'bg-gray-100 text-gray-800'
+                          end %>">
+                      <%= user.status.humanize %>
+                    </span>
+                  </div>
+                </td>
+                
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <div class="space-y-1">
+                    <% if user.missionary? %>
+                      <div>Updates: <%= user.missionary_updates.count %></div>
+                      <div>Prayers: <%= user.prayer_requests.count %></div>
+                      <div>Followers: <%= user.followers_count %></div>
+                    <% elsif user.supporter? %>
+                      <div>Following: <%= user.following_count %></div>
+                      <div>Prayers: <%= user.prayer_actions.count %></div>
+                    <% end %>
+                    <div class="text-xs">
+                      Last: <%= user.last_sign_in_at&.strftime("%b %d") || "Never" %>
+                    </div>
+                  </div>
+                </td>
+                
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <%= user.created_at.strftime("%b %d, %Y") %>
+                </td>
+                
+                <td class="px-6 py-4 text-right text-sm font-medium space-x-2">
+                  <%= link_to "View", admin_user_path(user), 
+                      class: "text-blue-600 hover:text-blue-700 transition-colors" %>
+                  
+                  <% if user.missionary? && user.pending? %>
+                    <%= link_to "Approve", approve_missionary_admin_user_path(user), 
+                        method: :patch,
+                        class: "text-green-600 hover:text-green-700 transition-colors",
+                        confirm: "Are you sure you want to approve this missionary?" %>
+                  <% end %>
+                  
+                  <% if user.is_active? %>
+                    <%= link_to "Suspend", suspend_admin_user_path(user), 
+                        method: :patch,
+                        class: "text-orange-600 hover:text-orange-700 transition-colors",
+                        confirm: "Are you sure you want to suspend this user?" %>
+                  <% else %>
+                    <%= link_to "Activate", activate_admin_user_path(user), 
+                        method: :patch,
+                        class: "text-green-600 hover:text-green-700 transition-colors" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <% if @users.respond_to?(:total_pages) && @users.total_pages > 1 %>
+        <div class="px-6 py-4 border-t border-gray-200">
+          <%= paginate @users, theme: :twitter_bootstrap_4, 
+              class: "flex justify-center" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const selectAllCheckbox = document.getElementById('select-all');
+  const userCheckboxes = document.querySelectorAll('.user-checkbox');
+  const selectedCount = document.getElementById('selected-count');
+  
+  // Handle select all
+  selectAllCheckbox.addEventListener('change', function() {
+    userCheckboxes.forEach(checkbox => {
+      checkbox.checked = this.checked;
+    });
+    updateSelectedCount();
+  });
+  
+  // Handle individual checkboxes
+  userCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      updateSelectAllState();
+      updateSelectedCount();
+    });
+  });
+  
+  function updateSelectAllState() {
+    const checkedCount = document.querySelectorAll('.user-checkbox:checked').length;
+    selectAllCheckbox.checked = checkedCount === userCheckboxes.length;
+    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < userCheckboxes.length;
+  }
+  
+  function updateSelectedCount() {
+    const count = document.querySelectorAll('.user-checkbox:checked').length;
+    selectedCount.textContent = count;
+  }
+});
+</script>

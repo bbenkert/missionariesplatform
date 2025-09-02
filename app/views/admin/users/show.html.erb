@@ -1,0 +1,331 @@
+<% content_for :title, "User Details - #{@user.name}" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center space-x-4">
+          <%= link_to admin_users_path, class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          <% end %>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+              <%= @user.name %>
+            </h1>
+            <p class="mt-1 text-gray-600">
+              <%= @user.email %> • Joined <%= @user.created_at.strftime("%B %d, %Y") %>
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <% if @user.missionary? && @user.pending? %>
+            <%= link_to "Approve Missionary", approve_missionary_admin_user_path(@user), 
+                method: :patch,
+                class: "bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors",
+                confirm: "Are you sure you want to approve this missionary account?" %>
+          <% end %>
+          
+          <% if @user.is_active? %>
+            <%= link_to "Suspend User", suspend_admin_user_path(@user), 
+                method: :patch,
+                class: "bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors",
+                confirm: "Are you sure you want to suspend this user?" %>
+          <% else %>
+            <%= link_to "Activate User", activate_admin_user_path(@user), 
+                method: :patch,
+                class: "bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" %>
+          <% end %>
+          
+          <%= link_to "Edit User", edit_admin_user_path(@user), 
+              class: "bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- User Profile Card -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="px-6 py-8 text-center">
+            <% if @user.avatar.attached? %>
+              <%= image_tag @user.avatar, class: "h-24 w-24 rounded-full mx-auto object-cover" %>
+            <% else %>
+              <div class="h-24 w-24 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold text-2xl mx-auto">
+                <%= @user.name.first.upcase %>
+              </div>
+            <% end %>
+            
+            <h2 class="mt-4 text-xl font-bold text-gray-900"><%= @user.name %></h2>
+            <p class="text-gray-600"><%= @user.email %></p>
+            
+            <div class="mt-4 flex justify-center space-x-4">
+              <span class="inline-flex px-3 py-1 text-sm font-medium rounded-full
+                <%= case @user.role
+                    when 'admin' then 'bg-red-100 text-red-800'
+                    when 'missionary' then 'bg-purple-100 text-purple-800'
+                    when 'supporter' then 'bg-green-100 text-green-800'
+                    when 'organization_admin' then 'bg-blue-100 text-blue-800'
+                    end %>">
+                <%= @user.role.humanize %>
+              </span>
+              
+              <span class="inline-flex px-3 py-1 text-sm font-medium rounded-full
+                <%= case @user.status
+                    when 'pending' then 'bg-yellow-100 text-yellow-800'
+                    when 'approved' then 'bg-green-100 text-green-800'
+                    when 'flagged' then 'bg-red-100 text-red-800'
+                    when 'suspended' then 'bg-gray-100 text-gray-800'
+                    end %>">
+                <%= @user.status.humanize %>
+              </span>
+            </div>
+          </div>
+          
+          <div class="border-t border-gray-200 px-6 py-4 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-500">Account Active</span>
+              <span class="text-sm font-semibold <%= @user.is_active? ? 'text-green-600' : 'text-red-600' %>">
+                <%= @user.is_active? ? 'Yes' : 'No' %>
+              </span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-500">Last Sign In</span>
+              <span class="text-sm text-gray-900">
+                <%= @user.last_sign_in_at&.strftime("%b %d, %Y at %l:%M %p") || 'Never' %>
+              </span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-500">Sign In Count</span>
+              <span class="text-sm text-gray-900">
+                <%= @user.sign_in_count || 0 %> times
+              </span>
+            </div>
+            
+            <% if @user.organization.present? %>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-500">Organization</span>
+                <span class="text-sm text-gray-900">
+                  <%= link_to @user.organization.name, organization_path(@user.organization), 
+                      class: "text-blue-600 hover:text-blue-700" %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Activity Stats</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <% if @user.missionary? %>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600"><%= @user_activity[:updates_count] %></div>
+                <div class="text-sm text-gray-600">Updates</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600"><%= @user_activity[:prayer_requests_count] %></div>
+                <div class="text-sm text-gray-600">Prayer Requests</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-green-600"><%= @user_activity[:followers_count] %></div>
+                <div class="text-sm text-gray-600">Followers</div>
+              </div>
+            <% elsif @user.supporter? %>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600"><%= @user_activity[:following_count] %></div>
+                <div class="text-sm text-gray-600">Following</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600"><%= @user.prayer_actions.count %></div>
+                <div class="text-sm text-gray-600">Prayers Made</div>
+              </div>
+            <% end %>
+            
+            <div class="text-center">
+              <div class="text-2xl font-bold text-indigo-600"><%= @user.unread_notifications_count %></div>
+              <div class="text-sm text-gray-600">Unread Notifications</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+          </div>
+          <div class="p-6">
+            <% if @user_activity[:recent_activity].any? %>
+              <div class="flow-root">
+                <ul class="-mb-8">
+                  <% @user_activity[:recent_activity].each_with_index do |activity, index| %>
+                    <li>
+                      <div class="relative pb-8">
+                        <% unless index == @user_activity[:recent_activity].length - 1 %>
+                          <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                        <% end %>
+                        <div class="relative flex space-x-3">
+                          <div>
+                            <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white
+                              <%= case activity[:type]
+                                  when 'update' then 'bg-blue-500'
+                                  when 'prayer' then 'bg-purple-500' 
+                                  when 'follow' then 'bg-green-500'
+                                  else 'bg-gray-500'
+                                  end %>">
+                              <% case activity[:type] %>
+                              <% when 'update' %>
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                              <% when 'prayer' %>
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                              <% when 'follow' %>
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                </svg>
+                              <% end %>
+                            </span>
+                          </div>
+                          <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                            <div>
+                              <p class="text-sm text-gray-500">
+                                <%= link_to activity[:title], activity[:url], 
+                                    class: "font-medium text-gray-900 hover:text-blue-600 transition-colors" %>
+                              </p>
+                            </div>
+                            <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                              <time><%= time_ago_in_words(activity[:created_at]) %> ago</time>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No recent activity</h3>
+                <p class="mt-1 text-sm text-gray-500">This user hasn't performed any actions yet.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Email Logs -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Email History</h3>
+          </div>
+          <div class="overflow-hidden">
+            <% if @email_logs.any? %>
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sent</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivered</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <% @email_logs.each do |log| %>
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                          <%= log.email_type.humanize %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                          <%= case log.status
+                              when 'delivered' then 'bg-green-100 text-green-800'
+                              when 'bounced' then 'bg-red-100 text-red-800'
+                              when 'complained' then 'bg-orange-100 text-orange-800'
+                              else 'bg-gray-100 text-gray-800'
+                              end %>">
+                          <%= log.status.humanize %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= log.sent_at&.strftime("%b %d, %l:%M %p") || 'Not sent' %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= log.delivered_at&.strftime("%b %d, %l:%M %p") || '-' %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <div class="px-6 py-8 text-center">
+                <p class="text-gray-500">No email logs found for this user.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Notifications</h3>
+          </div>
+          <div class="p-6">
+            <% if @notifications.any? %>
+              <div class="space-y-4">
+                <% @notifications.each do |notification| %>
+                  <div class="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg <%= 'bg-blue-50' if notification.unread? %>">
+                    <div class="flex-shrink-0">
+                      <div class="w-2 h-2 rounded-full <%= notification.unread? ? 'bg-blue-500' : 'bg-gray-300' %>"></div>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm font-medium text-gray-900">
+                        <%= notification.notification_type.humanize %>
+                      </p>
+                      <p class="text-sm text-gray-600 mt-1">
+                        <% if notification.payload['message'] %>
+                          <%= notification.payload['message'] %>
+                        <% elsif notification.payload['prayer_title'] %>
+                          Prayer: <%= notification.payload['prayer_title'] %>
+                        <% else %>
+                          <%= notification.payload.inspect %>
+                        <% end %>
+                      </p>
+                      <p class="text-xs text-gray-500 mt-2">
+                        <%= time_ago_in_words(notification.created_at) %> ago
+                      </p>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 01-.01-1.05A7.5 7.5 0 008.5 5.5v-.5a8 8 0 018 8V17z"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No notifications</h3>
+                <p class="mt-1 text-sm text-gray-500">This user has no notifications yet.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

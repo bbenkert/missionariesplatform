@@ -23,13 +23,13 @@ organizations = organizations_data.map do |org_data|
 end
 
 puts "Creating admin user..."
-admin = User.find_or_create_by(email: "admin@missionaryplatform.com") do |user|
-  user.name = "Admin User"
+admin_user = User.find_or_create_by(email: "admin@missionaryplatform.com") do |user|
+  user.name = "Platform Administrator"
   user.password = "password123"
   user.password_confirmation = "password123"
   user.role = "admin"
   user.status = "approved"
-  user.organization = organizations.sample
+  user.organization_id = organizations.sample.id
 end
 
 puts "Creating sample supporters..."
@@ -40,7 +40,7 @@ puts "Creating sample supporters..."
     user.password_confirmation = "password123"
     user.role = "supporter"
     user.status = "approved"
-    user.organization = organizations.sample
+    user.organization_id = organizations.sample.id
   end
 end
 
@@ -55,19 +55,18 @@ ministry_focuses = ["Church Planting", "Bible Translation", "Medical Missions", 
     user.password_confirmation = "password123"
     user.role = "missionary"
     user.status = "approved"
-    user.organization = organizations.sample
+    user.organization_id = organizations.sample.id
   end
 
   # Only create profile if it doesn't exist
   unless missionary.missionary_profile.present?
-    safety_modes = [:public, :limited, :private]
+    safety_modes = [:public_mode, :limited_mode, :private_mode]
     missionary.create_missionary_profile!(
       bio: "Dedicated missionary serving in #{countries.sample}. Passionate about #{ministry_focuses.sample.downcase} and building relationships with the local community.",
       ministry_focus: ministry_focuses.sample,
-      organization: organizations.sample.name,
+      organization_id: missionary.organization_id,
       country: countries.sample,
       city: "Sample City #{i+1}",
-      prayer_requests: "Please pray for:\n- Language learning\n- Building relationships with locals\n- Wisdom in ministry decisions",
       ministry_description: "Working with local communities to share the Gospel and provide practical support where needed.",
       started_ministry_at: rand(1..10).years.ago,
       safety_mode: safety_modes.sample
