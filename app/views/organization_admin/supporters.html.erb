@@ -19,7 +19,7 @@
         <div class="bg-white shadow overflow-hidden sm:rounded-md">
           <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
             <h3 class="text-lg leading-6 font-medium text-gray-900">
-              All Supporters (<%= @supporters.total_count if @supporters.respond_to?(:total_count) %>)
+              All Supporters (<%= @pagy.count %>)
             </h3>
             <p class="mt-1 max-w-2xl text-sm text-gray-500">Supporters who are following your organization</p>
           </div>
