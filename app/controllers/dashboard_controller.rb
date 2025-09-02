@@ -14,6 +14,34 @@ class DashboardController < ApplicationController
     end
   end
 
+  def supporter
+    # Get followed missionary profiles
+    @followed_missionary_profiles = current_user.followed_missionaries.includes(:user)
+    
+    # Get the users (missionaries) from these profiles
+    followed_missionary_user_ids = @followed_missionary_profiles.map(&:user_id).compact
+    
+    # Get latest updates from followed missionaries
+    @latest_updates = MissionaryUpdate.includes(:user)
+                                     .where(user_id: followed_missionary_user_ids)
+                                     .order(created_at: :desc)
+                                     .limit(10)
+    
+    # Get latest prayer requests from followed missionaries
+    @latest_prayer_requests = PrayerRequest.includes(:missionary_profile, :user)
+                                          .where(missionary_profile_id: @followed_missionary_profiles.pluck(:id))
+                                          .order(created_at: :desc)
+                                          .limit(8)
+    
+    # Get statistics
+    @stats = {
+      following_count: @followed_missionary_profiles.count,
+      total_updates: @latest_updates.count,
+      total_prayer_requests: @latest_prayer_requests.count,
+      prayers_offered: current_user.prayer_actions.count
+    }
+  end
+
   private
 
   def missionary_dashboard_path
@@ -22,7 +50,6 @@ class DashboardController < ApplicationController
   end
 
   def supporter_dashboard_path
-    # For now, redirect to missionaries index - later can be a dedicated dashboard
-    missionaries_path
+    dashboard_supporter_path
   end
 end

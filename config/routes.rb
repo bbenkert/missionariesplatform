@@ -64,6 +64,7 @@ Rails.application.routes.draw do
 
   # User dashboard and profile
   get "dashboard", to: "dashboard#index"
+  get "dashboard/supporter", to: "dashboard#supporter", as: :dashboard_supporter
   resource :profile, only: [:show, :edit, :update]
 
   # Messaging system

@@ -93,20 +93,39 @@ class PrayerRequestsController < ApplicationController
   # POST /prayer_requests/:id/pray
   def pray
     unless can_view_prayer_request?(@prayer_request)
-      flash[:alert] = "You don't have permission to pray for this request."
-      redirect_to prayer_requests_path
+      respond_to do |format|
+        format.html do
+          flash[:alert] = "You don't have permission to pray for this request."
+          redirect_to prayer_requests_path
+        end
+        format.json { render json: { error: "Permission denied" }, status: :forbidden }
+      end
       return
     end
     
     prayer_action = PrayerAction.pray!(user: current_user, prayer_request: @prayer_request)
     
-    if prayer_action
-      flash[:notice] = "Thank you for praying for #{@prayer_request.missionary_profile.user.name}!"
-    else
-      flash[:alert] = "Something went wrong. Please try again."
+    respond_to do |format|
+      if prayer_action
+        format.html do
+          flash[:notice] = "Thank you for praying for #{@prayer_request.missionary_profile.user.name}!"
+          redirect_to @prayer_request
+        end
+        format.json { 
+          render json: { 
+            success: true, 
+            message: "Thank you for praying!",
+            prayer_count: @prayer_request.prayer_actions.count
+          }
+        }
+      else
+        format.html do
+          flash[:alert] = "Something went wrong. Please try again."
+          redirect_to @prayer_request
+        end
+        format.json { render json: { error: "Something went wrong" }, status: :unprocessable_entity }
+      end
     end
-    
-    redirect_to @prayer_request
   end
 
   private
