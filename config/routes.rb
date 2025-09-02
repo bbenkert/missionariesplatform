@@ -78,6 +78,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Updates (standalone for missionaries to manage their own)
+  resources :updates, except: [:show]
+
   # Follow system
   post "follows", to: "follows#create"
   delete "follows", to: "follows#destroy"
@@ -85,7 +88,12 @@ Rails.application.routes.draw do
   # User dashboard and profile
   get "dashboard", to: "dashboard#index"
   get "dashboard/supporter", to: "dashboard#supporter", as: :dashboard_supporter
+  get "dashboard/missionary", to: "dashboard#missionary", as: :dashboard_missionary
   resource :profile, only: [:show, :edit, :update]
+
+  # Missionary settings
+  get "missionary_settings", to: "missionary_settings#show"
+  patch "missionary_settings", to: "missionary_settings#update"
 
   # Messaging system
   resources :conversations, only: [:index, :show, :new, :create] do

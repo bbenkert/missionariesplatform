@@ -5,27 +5,43 @@ class PrayerRequestsController < ApplicationController
   before_action :ensure_missionary_profile, only: [:new, :create, :edit, :update, :destroy]
   
   def index
-    @prayer_requests = PrayerRequest.joins(:missionary_profile)
+    # Get traditional prayer requests
+    prayer_requests = PrayerRequest.joins(:missionary_profile)
                                    .where(missionary_profiles: { safety_mode: :public_mode })
                                    .includes(:missionary_profile, :praying_users)
                                    .status_open
                                    .recent
-                                   .limit(50)
+                                   .limit(25)
+    
+    # Get missionary updates that are prayer requests
+    prayer_updates = MissionaryUpdate.joins(user: :missionary_profile)
+                                     .where(missionary_profiles: { safety_mode: :public_mode })
+                                     .where(update_type: :prayer_request, status: :published)
+                                     .where(visibility: [:public_visibility, :followers_only])
+                                     .includes(user: :missionary_profile)
+                                     .recent
+                                     .limit(25)
     
     # Apply search filter if present
     if params[:search].present?
-      @prayer_requests = @prayer_requests.search(params[:search])
+      prayer_requests = prayer_requests.search(params[:search])
+      prayer_updates = prayer_updates.where("title ILIKE ? OR content::text ILIKE ?", "%#{params[:search]}%", "%#{params[:search]}%")
     end
     
     # Apply tag filter if present
     if params[:tag].present?
-      @prayer_requests = @prayer_requests.by_tags([params[:tag]])
+      prayer_requests = prayer_requests.by_tags([params[:tag]])
+      prayer_updates = prayer_updates.where("tags ILIKE ?", "%#{params[:tag]}%")
     end
     
     # Apply urgency filter if present
     if params[:urgency].present?
-      @prayer_requests = @prayer_requests.where(urgency: params[:urgency])
+      prayer_requests = prayer_requests.where(urgency: params[:urgency])
+      # Note: MissionaryUpdate doesn't have urgency field, so we skip this filter for updates
     end
+    
+    @prayer_requests = prayer_requests.to_a
+    @prayer_updates = prayer_updates.to_a
   end
 
   def show

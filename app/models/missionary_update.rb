@@ -1,6 +1,9 @@
 class MissionaryUpdate < ApplicationRecord
   belongs_to :user
 
+  # Rich text content
+  has_rich_text :content
+
   validates :title, presence: true
   validates :content, presence: true
   validates :update_type, inclusion: { in: %w[general_update prayer_request praise_report ministry_news] }

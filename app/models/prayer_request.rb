@@ -60,6 +60,10 @@ class PrayerRequest < ApplicationRecord
     prayer_actions.exists?(user: user)
   end
   
+  def is_urgent?
+    urgency_high?
+  end
+  
   def tag_list
     tags&.join(', ') || ''
   end

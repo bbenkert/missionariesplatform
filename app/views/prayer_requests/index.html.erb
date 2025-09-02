@@ -39,6 +39,7 @@
 
   <!-- Prayer Requests Grid -->
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Traditional Prayer Requests -->
     <% @prayer_requests.each do |prayer_request| %>
       <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="p-6">
@@ -125,9 +126,76 @@
         </div>
       </div>
     <% end %>
+
+    <!-- Prayer Requests from Updates -->
+    <% @prayer_updates.each do |prayer_update| %>
+      <div class="bg-white shadow rounded-lg overflow-hidden border-l-4 border-blue-500">
+        <div class="p-6">
+          <!-- Update Type Badge -->
+          <div class="flex justify-between items-start mb-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <%= prayer_update.is_urgent? ? "Urgent " : "" %>Prayer Request
+            </span>
+            <small class="text-gray-500">
+              <%= time_ago_in_words(prayer_update.created_at) %> ago
+            </small>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            <%= link_to prayer_update.title, missionary_update_path(prayer_update.user, prayer_update), 
+                class: "hover:text-blue-600 transition-colors" %>
+          </h3>
+
+          <!-- Content Preview -->
+          <div class="text-gray-600 text-sm mb-4 line-clamp-3">
+            <%= truncate(strip_tags(prayer_update.content.to_plain_text), length: 120) %>
+          </div>
+
+          <!-- Missionary Info -->
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <img class="h-8 w-8 rounded-full" 
+                   src="https://ui-avatars.com/api/?name=<%= URI.encode_www_form_component(prayer_update.user.name) %>&background=3B82F6&color=FFFFFF" 
+                   alt="<%= prayer_update.user.name %>">
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-900">
+                <%= prayer_update.user.name %>
+              </p>
+              <p class="text-sm text-gray-500">
+                <%= prayer_update.user.missionary_profile&.ministry_focus %>
+              </p>
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <% if prayer_update.tags.present? %>
+            <div class="flex flex-wrap gap-1 mb-4">
+              <% prayer_update.tags.split(',').map(&:strip).each do |tag| %>
+                <%= link_to tag, prayer_requests_path(tag: tag), 
+                    class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded hover:bg-gray-200" %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Actions -->
+          <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+            <span class="text-sm text-gray-500">
+              Missionary Update
+            </span>
+            
+            <div class="flex space-x-2">
+              <%= link_to "View Update", missionary_update_path(prayer_update.user, prayer_update), 
+                  class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 
-  <% if @prayer_requests.empty? %>
+  <% if @prayer_requests.empty? && @prayer_updates.empty? %>
     <div class="text-center py-12">
       <div class="mx-auto h-12 w-12 text-gray-400">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +213,9 @@
       <% if current_user&.missionary_profile && params[:search].blank? && params[:tag].blank? %>
         <div class="mt-6">
           <%= link_to "Create Prayer Request", new_prayer_request_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 mr-3" %>
+          <%= link_to "Create Update", new_missionary_update_path(current_user), 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
         </div>
       <% end %>
     </div>

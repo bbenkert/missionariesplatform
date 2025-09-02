@@ -4,21 +4,41 @@ class UpdatesController < ApplicationController
   before_action :set_update, only: [:show, :edit, :update, :destroy]
 
   def index
-    @updates = @missionary.missionary_updates.published.recent
+    if @missionary
+      # Nested route: /missionaries/:missionary_id/updates
+      @updates = @missionary.missionary_updates.published.recent
+    else
+      # Standalone route: /updates (for current user's updates)
+      redirect_to root_path, alert: 'Access denied.' unless current_user.missionary?
+      @updates = current_user.missionary_updates.recent
+      @missionary = current_user
+    end
   end
 
   def new
-    @update = @missionary.missionary_updates.new
+    redirect_to root_path, alert: 'Access denied.' unless current_user.missionary?
+    @missionary = current_user
+    @update = current_user.missionary_updates.new
   end
 
   def create
-    @update = @missionary.missionary_updates.new(update_params)
-    @update.user = @missionary
+    redirect_to root_path, alert: 'Access denied.' unless current_user.missionary?
+    @missionary = current_user
+    @update = current_user.missionary_updates.new(update_params)
+
+    # Handle draft saving
+    if params[:commit] == "Save as Draft"
+      @update.status = :draft
+    end
 
     if @update.save
-      redirect_to missionary_path(@missionary), notice: 'Update was successfully created.'
+      if @update.published?
+        redirect_to dashboard_missionary_path, notice: 'Update was successfully created and published.'
+      else
+        redirect_to dashboard_missionary_path, notice: 'Update was saved as draft.'
+      end
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -31,12 +51,20 @@ class UpdatesController < ApplicationController
 
   def edit
     # Ensure only the missionary or admin can edit
-    unless current_user == @missionary || current_user&.admin?
-      redirect_to missionary_path(@missionary), alert: 'You are not authorized to edit this update.'
+    unless current_user == @update.user || current_user&.admin?
+      redirect_to dashboard_missionary_path, alert: 'You are not authorized to edit this update.'
     end
+    @missionary = @update.user
   end
 
   def update
+    # Ensure only the missionary or admin can edit
+    unless current_user == @update.user || current_user&.admin?
+      redirect_to dashboard_missionary_path, alert: 'You are not authorized to edit this update.'
+    end
+    
+    @missionary = @update.user
+
     # Handle draft saving
     if params[:commit] == "Save as Draft"
       @update.status = :draft
@@ -44,9 +72,9 @@ class UpdatesController < ApplicationController
 
     if @update.update(update_params)
       if @update.published?
-        redirect_to missionary_update_path(@missionary, @update), notice: 'Update was successfully updated and published.'
+        redirect_to dashboard_missionary_path, notice: 'Update was successfully updated and published.'
       else
-        redirect_to missionary_path(@missionary), notice: 'Update was saved as draft.'
+        redirect_to dashboard_missionary_path, notice: 'Update was saved as draft.'
       end
     else
       render :edit, status: :unprocessable_entity
@@ -54,18 +82,35 @@ class UpdatesController < ApplicationController
   end
 
   def destroy
+    # Ensure only the missionary or admin can delete
+    unless current_user == @update.user || current_user&.admin?
+      redirect_to dashboard_missionary_path, alert: 'You are not authorized to delete this update.'
+      return
+    end
+    
     @update.destroy
-    redirect_to missionary_path(@missionary), notice: 'Update was successfully destroyed.'
+    redirect_to dashboard_missionary_path, notice: 'Update was successfully deleted.'
   end
 
   private
 
   def set_missionary
-    @missionary = User.missionaries.find(params[:missionary_id])
+    if params[:missionary_id]
+      # Nested route: /missionaries/:missionary_id/updates
+      @missionary = User.missionaries.find(params[:missionary_id])
+    else
+      # Standalone route: /updates (for current user)
+      @missionary = current_user if current_user&.missionary?
+    end
   end
 
   def set_update
-    @update = @missionary.missionary_updates.find(params[:id])
+    if @missionary
+      @update = @missionary.missionary_updates.find(params[:id])
+    else
+      # For standalone routes, find updates belonging to current user
+      @update = current_user.missionary_updates.find(params[:id])
+    end
   end
 
   def update_params

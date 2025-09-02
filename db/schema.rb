@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_131505) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_230011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -152,7 +152,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_131505) do
   create_table "missionary_updates", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "title", null: false
-    t.text "content"
     t.integer "update_type", default: 0
     t.integer "status", default: 0
     t.boolean "is_urgent", default: false

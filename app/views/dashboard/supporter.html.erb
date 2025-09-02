@@ -2,8 +2,17 @@
 <div class="min-h-screen bg-gray-50">
   <!-- Header -->
   <div class="bg-white shadow-sm border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px      <!-- Right Column - Prayer Requests (1/3 width) -->
+      <div class="lg:col-span-1">
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900 flex items-center">
+              <svg class="h-5 w-5 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+              Prayer Requests
+            </h2>
+          </div><div class="py-6">
         <div class="flex items-center justify-between">
           <div>
             <h1 class="text-2xl font-bold text-gray-900">
@@ -102,10 +111,10 @@
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex flex-col lg:flex-row gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       
-      <!-- Left Column - Updates Feed -->
-      <div class="flex-1 lg:w-2/3">
+      <!-- Left Column - Latest Updates (2/3 width) -->
+      <div class="lg:col-span-2">
         <div class="bg-white shadow rounded-lg">
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
@@ -120,7 +129,7 @@
             </div>
           </div>
 
-          <div class="divide-y divide-gray-200">
+          <div class="divide-y divide-gray-200 max-h-[600px] overflow-y-auto">
             <% if @latest_updates.any? %>
               <% @latest_updates.each do |update| %>
                 <article class="p-6 hover:bg-gray-50 transition-colors duration-200">
@@ -193,44 +202,79 @@
         </div>
       </div>
 
-      <!-- Right Column - Prayer Requests -->
-      <div class="lg:w-1/3">
-        <div class="bg-white shadow rounded-lg">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-lg font-medium text-gray-900 flex items-center">
-              <svg class="h-5 w-5 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Right Column - Prayer Requests (1/3 width) -->
+      <div class="lg:col-span-1">
+        <div class="bg-white shadow rounded-lg h-fit">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <h2 class="text-base font-medium text-gray-900 flex items-center">
+              <svg class="h-4 w-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
               </svg>
               Prayer Requests
             </h2>
           </div>
 
-          <div class="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+          <div class="divide-y divide-gray-200 max-h-[600px] overflow-y-auto">
             <% if @latest_prayer_requests.any? %>
               <% @latest_prayer_requests.each do |prayer_request| %>
-                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
-                  <div class="flex items-start space-x-3">
-                    <div class="flex-shrink-0">
-                      <% if prayer_request.missionary_profile.user.avatar.attached? %>
-                        <%= image_tag prayer_request.missionary_profile.user.avatar, class: "h-8 w-8 rounded-full object-cover" %>
-                      <% else %>
-                        <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                          <span class="text-xs font-medium text-purple-600">
-                            <%= prayer_request.missionary_profile.user.name.first %>
-                          </span>
-                        </div>
+                <% 
+                  # Determine the type and appropriate path
+                  if prayer_request.is_a?(PrayerRequest)
+                    request_path = prayer_request_path(prayer_request)
+                    author_user = prayer_request.missionary_profile&.user
+                    title = prayer_request.title
+                    description = prayer_request.body
+                    urgency = prayer_request.urgency
+                    prayer_count = prayer_request.prayer_actions.count
+                  else # MissionaryUpdate with prayer_request type
+                    request_path = missionary_update_path(prayer_request.user, prayer_request)
+                    author_user = prayer_request.user
+                    title = prayer_request.title
+                    description = prayer_request.content.to_plain_text if prayer_request.content.present?
+                    urgency = nil
+                    prayer_count = 0 # MissionaryUpdates don't have prayer_actions yet
+                  end
+                %>
+                
+                <%= link_to request_path, class: "block p-3 hover:bg-gray-50 transition-colors duration-200 cursor-pointer" do %>
+                  <div class="space-y-2">
+                    <div class="flex items-center space-x-2">
+                      <div class="flex-shrink-0">
+                        <% if author_user&.avatar&.attached? %>
+                          <%= image_tag author_user.avatar, class: "h-6 w-6 rounded-full object-cover" %>
+                        <% else %>
+                          <div class="h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center">
+                            <span class="text-xs font-medium text-purple-600">
+                              <%= author_user&.name&.first || "?" %>
+                            </span>
+                          </div>
+                        <% end %>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-medium text-gray-900 truncate">
+                          <%= author_user&.name %>
+                        </p>
+                        <span class="text-xs text-gray-500">
+                          <%= time_ago_in_words(prayer_request.created_at) %>
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 class="text-sm font-medium text-gray-800 mb-1 leading-tight">
+                        <%= truncate(title, length: 50) %>
+                      </h4>
+                      <% if description.present? %>
+                        <p class="text-xs text-gray-600 mb-2 leading-relaxed">
+                          <%= truncate(strip_tags(description), length: 100) %>
+                        </p>
                       <% end %>
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-gray-900">
-                        <%= prayer_request.missionary_profile.user.name %>
-                      </p>
-                      <p class="text-sm text-gray-600 mt-1">
-                        <%= truncate(prayer_request.title, length: 60) %>
-                      </p>
-                      <div class="mt-2 flex items-center justify-between">
+                    
+                    <div class="flex items-center justify-between">
+                      <% if urgency.present? %>
                         <% 
-                          urgency_class = case prayer_request.urgency
+                          urgency_class = case urgency
                                          when 'high'
                                            'bg-red-100 text-red-800'
                                          when 'medium'
@@ -240,31 +284,22 @@
                                          end
                         %>
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= urgency_class %>">
-                          <%= prayer_request.urgency.humanize %> urgency
+                          <%= urgency.humanize %>
                         </span>
-                        <div class="flex items-center space-x-2">
-                          <%= form_with url: pray_prayer_request_path(prayer_request), method: :post, local: false, 
-                              class: "inline-flex items-center", 
-                              data: { 
-                                controller: "prayer",
-                                action: "submit->prayer#handleFormSubmit" 
-                              } do %>
-                            <button type="submit" data-prayer-target="button"
-                                    data-disable-with: "🙏"
-                                    class="text-purple-600 hover:text-purple-800 transition-colors duration-200">
-                              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"></path>
-                              </svg>
-                            </button>
-                          <% end %>
-                          <span class="text-xs text-gray-500" data-prayer-target="count">
-                            <%= prayer_request.prayer_actions.count %> prayers
-                          </span>
-                        </div>
+                      <% else %>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          Update
+                        </span>
+                      <% end %>
+                      <div class="flex items-center space-x-1 text-xs text-gray-500">
+                        <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"></path>
+                        </svg>
+                        <span><%= prayer_count %></span>
                       </div>
                     </div>
                   </div>
-                </div>
+                <% end %>
               <% end %>
             <% else %>
               <div class="p-8 text-center">
