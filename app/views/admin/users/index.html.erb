@@ -334,10 +334,11 @@
       </div>
       
       <!-- Pagination -->
-      <% if @users.respond_to?(:total_pages) && @users.total_pages > 1 %>
+      <% if @pagy.pages > 1 %>
         <div class="px-6 py-4 border-t border-gray-200">
-          <%= paginate @users, theme: :twitter_bootstrap_4, 
-              class: "flex justify-center" %>
+          <div class="flex justify-center">
+            <%== pagy_bootstrap_nav(@pagy) %>
+          </div>
         </div>
       <% end %>
     </div>

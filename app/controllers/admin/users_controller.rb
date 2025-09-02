@@ -3,15 +3,15 @@ class Admin::UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :approve_missionary, :suspend, :activate]
 
   def index
-    @users = User.includes(:missionary_profile, :organization)
-                .order(created_at: :desc)
+    users_query = User.includes(:missionary_profile, :organization)
+                      .order(created_at: :desc)
     
     # Filtering
-    @users = @users.where(role: params[:role]) if params[:role].present?
-    @users = @users.where(status: params[:status]) if params[:status].present?
-    @users = @users.where('name ILIKE ? OR email ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%") if params[:search].present?
+    users_query = users_query.where(role: params[:role]) if params[:role].present?
+    users_query = users_query.where(status: params[:status]) if params[:status].present?
+    users_query = users_query.where('name ILIKE ? OR email ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%") if params[:search].present?
     
-    @users = @users.page(params[:page])
+    @pagy, @users = pagy(users_query)
     
     # Stats for the dashboard
     @stats = {
@@ -19,7 +19,7 @@ class Admin::UsersController < ApplicationController
       supporters: User.supporters.count,
       missionaries: User.missionaries.count,
       pending_missionaries: User.missionaries.pending.count,
-      active_users: User.where('last_sign_in_at > ?', 30.days.ago).count,
+      active_users: User.where('current_sign_in_at > ?', 30.days.ago).count,
       new_this_week: User.where('created_at > ?', 1.week.ago).count
     }
   end
