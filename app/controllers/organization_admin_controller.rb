@@ -32,26 +32,27 @@ class OrganizationAdminController < ApplicationController
   end
   
   def missionaries
-    @missionaries = @organization.missionaries.joins(:missionary_profile)
-                                 .includes(:missionary_profile, avatar_attachment: :blob)
-                                 .order(created_at: :desc)
-                                 .page(params[:page])
+    missionaries_query = @organization.missionaries.joins(:missionary_profile)
+                                       .includes(:missionary_profile, avatar_attachment: :blob)
+                                       .order(created_at: :desc)
                                  
     @filter = params[:filter] || 'all'
     case @filter
     when 'approved'
-      @missionaries = @missionaries.approved
+      missionaries_query = missionaries_query.approved
     when 'pending'
-      @missionaries = @missionaries.pending_approval
+      missionaries_query = missionaries_query.pending_approval
     when 'suspended'
-      @missionaries = @missionaries.suspended
+      missionaries_query = missionaries_query.suspended
     end
+    
+    @pagy, @missionaries = pagy(missionaries_query)
   end
   
   def supporters
-    @supporters = @organization.followers.includes(avatar_attachment: :blob)
-                               .order(:name)
-                               .page(params[:page])
+    supporters_query = @organization.followers.includes(avatar_attachment: :blob)
+                                     .order(:name)
+    @pagy, @supporters = pagy(supporters_query)
     
     @recent_follows = Follow.where(followable: @organization)
                            .includes(:user)
@@ -60,21 +61,22 @@ class OrganizationAdminController < ApplicationController
   end
   
   def activity
-    @updates = MissionaryUpdate.joins(user: :missionary_profile)
-                              .includes(:user, user: { missionary_profile: :organization })
-                              .where(missionary_profiles: { organization: @organization })
-                              .order(created_at: :desc)
-                              .page(params[:page])
+    updates_query = MissionaryUpdate.joins(user: :missionary_profile)
+                                    .includes(:user, user: { missionary_profile: :organization })
+                                    .where(missionary_profiles: { organization: @organization })
+                                    .order(created_at: :desc)
     
     @filter = params[:filter] || 'all'
     case @filter
     when 'published'
-      @updates = @updates.published
+      updates_query = updates_query.published
     when 'draft'
-      @updates = @updates.draft
+      updates_query = updates_query.draft
     when 'archived'
-      @updates = @updates.archived
+      updates_query = updates_query.archived
     end
+    
+    @pagy, @updates = pagy(updates_query)
   end
   
   def settings
