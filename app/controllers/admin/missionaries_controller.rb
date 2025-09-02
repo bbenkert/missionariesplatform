@@ -2,9 +2,9 @@ class Admin::MissionariesController < ApplicationController
   before_action :require_admin
 
   def index
-    @missionaries = User.missionaries.includes(:missionary_profile)
-                        .order(created_at: :desc)
-                        .page(params[:page])
+    missionaries_query = User.missionaries.includes(:missionary_profile)
+                              .order(created_at: :desc)
+    @pagy, @missionaries = pagy(missionaries_query)
   end
 
   def show

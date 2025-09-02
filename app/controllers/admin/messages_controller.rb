@@ -2,9 +2,9 @@ class Admin::MessagesController < ApplicationController
   before_action :require_admin
 
   def index
-    @messages = Message.includes(:sender, :conversation)
-                       .order(created_at: :desc)
-                       .page(params[:page])
+    messages_query = Message.includes(:sender, :conversation)
+                            .order(created_at: :desc)
+    @pagy, @messages = pagy(messages_query)
   end
 
   def show
