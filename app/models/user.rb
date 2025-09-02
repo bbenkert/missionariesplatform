@@ -9,7 +9,7 @@ class User < ApplicationRecord
   validates :name, presence: true
 
   # Enums (these automatically validate the values and generate helper methods)
-  enum :role, supporter: 0, missionary: 1, admin: 2
+  enum :role, supporter: 0, missionary: 1, admin: 2, organization_admin: 3
   enum :status, pending: 0, approved: 1, flagged: 2, suspended: 3
 
   # Associations
@@ -86,7 +86,11 @@ class User < ApplicationRecord
 
   def following_count
     return 0 unless supporter?
-    supporter_followings.count
+    follows.count
+  end
+
+  def following?(followable)
+    follows.exists?(followable: followable)
   end
 
   def can_message?(other_user)

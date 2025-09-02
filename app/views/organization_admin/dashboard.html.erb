@@ -1,0 +1,211 @@
+<div class="bg-white">
+  <!-- Page Header -->
+  <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900"><%= @organization.name %> Dashboard</h1>
+        <p class="mt-1 text-sm text-gray-500">Manage your organization's missionaries and supporters</p>
+      </div>
+      <%= link_to "Settings", organization_admin_settings_path, 
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="px-4 py-6 sm:px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Active Missionaries</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= @stats[:missionaries] %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <%= link_to "View All", organization_admin_missionaries_path, class: "text-sm text-blue-600 hover:text-blue-900" %>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Supporters</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= @stats[:supporters] %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <%= link_to "View All", organization_admin_supporters_path, class: "text-sm text-green-600 hover:text-green-900" %>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Updates</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= @stats[:total_updates] %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <%= link_to "View Activity", organization_admin_activity_path, class: "text-sm text-purple-600 hover:text-purple-900" %>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Prayer Requests</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= @stats[:prayer_requests] %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <%= link_to "View Requests", prayer_requests_path, class: "text-sm text-yellow-600 hover:text-yellow-900" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Missionaries -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Missionaries</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">Recently joined missionaries from your organization</p>
+        </div>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% if @recent_missionaries.any? %>
+            <% @recent_missionaries.each do |missionary| %>
+              <li class="px-4 py-4 sm:px-6">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-shrink-0">
+                    <% if missionary.avatar.attached? %>
+                      <%= image_tag missionary.avatar, class: "h-10 w-10 rounded-full" %>
+                    <% else %>
+                      <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                        <span class="text-sm font-medium text-gray-700"><%= missionary.name.first %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate"><%= missionary.name %></p>
+                    <p class="text-sm text-gray-500 truncate">
+                      <%= missionary.missionary_profile.country %> • 
+                      <%= missionary.missionary_profile.ministry_focus %>
+                    </p>
+                  </div>
+                  <div class="flex-shrink-0 text-sm text-gray-500">
+                    <%= missionary.created_at.strftime("%b %d") %>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+          <% else %>
+            <li class="px-4 py-8 text-center">
+              <p class="text-sm text-gray-500">No missionaries yet</p>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Updates</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">Latest ministry updates from your missionaries</p>
+        </div>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% if @recent_updates.any? %>
+            <% @recent_updates.each do |update| %>
+              <li class="px-4 py-4 sm:px-6">
+                <div class="flex space-x-3">
+                  <div class="flex-shrink-0">
+                    <% if update.user.avatar.attached? %>
+                      <%= image_tag update.user.avatar, class: "h-8 w-8 rounded-full" %>
+                    <% else %>
+                      <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+                        <span class="text-xs font-medium text-gray-700"><%= update.user.name.first %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm text-gray-900">
+                      <span class="font-medium"><%= update.user.name %></span>
+                      posted an update
+                    </p>
+                    <p class="text-sm text-gray-500 truncate"><%= update.title %></p>
+                    <p class="text-xs text-gray-400 mt-1"><%= time_ago_in_words(update.created_at) %> ago</p>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+          <% else %>
+            <li class="px-4 py-8 text-center">
+              <p class="text-sm text-gray-500">No recent updates</p>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Activity Chart -->
+    <% if @monthly_activity.any? %>
+      <div class="mt-8 bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Monthly Activity</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">Updates and new supporters over the last 12 months</p>
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <% @monthly_activity.each do |month_data| %>
+              <div class="text-center">
+                <div class="text-xs text-gray-500 mb-1"><%= month_data[:month] %></div>
+                <div class="bg-blue-100 rounded p-2">
+                  <div class="text-sm font-medium text-blue-900"><%= month_data[:updates] %></div>
+                  <div class="text-xs text-blue-600">Updates</div>
+                </div>
+                <div class="bg-green-100 rounded p-2 mt-1">
+                  <div class="text-sm font-medium text-green-900"><%= month_data[:new_supporters] %></div>
+                  <div class="text-xs text-green-600">New Supporters</div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

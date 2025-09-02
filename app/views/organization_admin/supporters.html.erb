@@ -1,0 +1,174 @@
+<div class="bg-white">
+  <!-- Page Header -->
+  <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Supporters</h1>
+        <p class="mt-1 text-sm text-gray-500">People following <%= @organization.name %></p>
+      </div>
+      <%= link_to "Back to Dashboard", organization_admin_dashboard_path, 
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+    </div>
+  </div>
+
+  <div class="px-4 py-6 sm:px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Supporters List -->
+      <div class="lg:col-span-2">
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+          <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+              All Supporters (<%= @supporters.total_count if @supporters.respond_to?(:total_count) %>)
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Supporters who are following your organization</p>
+          </div>
+          
+          <% if @supporters.any? %>
+            <ul role="list" class="divide-y divide-gray-200">
+              <% @supporters.each do |supporter| %>
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                      <% if supporter.avatar.attached? %>
+                        <%= image_tag supporter.avatar, class: "h-10 w-10 rounded-full" %>
+                      <% else %>
+                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                          <span class="text-sm font-medium text-gray-700"><%= supporter.name.first %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate"><%= supporter.name %></p>
+                      <div class="flex items-center mt-1">
+                        <p class="text-sm text-gray-500 truncate">
+                          Supporter
+                        </p>
+                        <% follow = Follow.find_by(user: supporter, followable: @organization) %>
+                        <% if follow %>
+                          <span class="ml-2 text-xs text-gray-400">
+                            Following since <%= follow.created_at.strftime("%b %Y") %>
+                          </span>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="flex-shrink-0 text-sm text-gray-500">
+                      <% if supporter.current_sign_in_at %>
+                        Active <%= time_ago_in_words(supporter.current_sign_in_at) %> ago
+                      <% else %>
+                        Joined <%= time_ago_in_words(supporter.created_at) %> ago
+                      <% end %>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+            
+            <!-- Pagination -->
+            <% if respond_to?(:paginate) && @supporters.respond_to?(:current_page) %>
+              <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                <%= paginate @supporters %>
+              </div>
+            <% end %>
+            
+          <% else %>
+            <div class="text-center py-12">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No supporters yet</h3>
+              <p class="mt-1 text-sm text-gray-500">
+                When people follow your organization, they'll appear here.
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Recent Follows -->
+      <div class="lg:col-span-1">
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+          <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Followers</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">People who recently started following</p>
+          </div>
+          
+          <% if @recent_follows.any? %>
+            <ul role="list" class="divide-y divide-gray-200">
+              <% @recent_follows.each do |follow| %>
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                      <% if follow.user.avatar.attached? %>
+                        <%= image_tag follow.user.avatar, class: "h-8 w-8 rounded-full" %>
+                      <% else %>
+                        <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+                          <span class="text-xs font-medium text-gray-700"><%= follow.user.name.first %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate"><%= follow.user.name %></p>
+                      <p class="text-xs text-gray-500">
+                        <%= time_ago_in_words(follow.created_at) %> ago
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <div class="px-4 py-8 text-center">
+              <p class="text-sm text-gray-500">No recent follows</p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Statistics Card -->
+        <div class="mt-6 bg-white shadow overflow-hidden sm:rounded-md">
+          <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Support Stats</h3>
+          </div>
+          
+          <div class="px-4 py-5 sm:p-6">
+            <dl class="grid grid-cols-1 gap-5">
+              <div>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Supporters</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900"><%= @organization.followers_count %></dd>
+              </div>
+              
+              <div>
+                <dt class="text-sm font-medium text-gray-500 truncate">This Month</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                  <%= Follow.where(followable: @organization)
+                           .where(created_at: Date.current.beginning_of_month..Date.current.end_of_month)
+                           .count %>
+                </dd>
+              </div>
+              
+              <div>
+                <dt class="text-sm font-medium text-gray-500 truncate">Growth Rate</dt>
+                <dd class="mt-1 text-lg font-semibold">
+                  <% current_month = Follow.where(followable: @organization)
+                                         .where(created_at: Date.current.beginning_of_month..Date.current.end_of_month)
+                                         .count %>
+                  <% last_month = Follow.where(followable: @organization)
+                                       .where(created_at: 1.month.ago.beginning_of_month..1.month.ago.end_of_month)
+                                       .count %>
+                  <% if last_month > 0 %>
+                    <% growth = ((current_month - last_month).to_f / last_month * 100).round(1) %>
+                    <span class="<%= growth >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                      <%= growth >= 0 ? '+' : '' %><%= growth %>%
+                    </span>
+                  <% else %>
+                    <span class="text-gray-500">N/A</span>
+                  <% end %>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

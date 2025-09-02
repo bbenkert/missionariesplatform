@@ -12,13 +12,13 @@
     </h2>
     <p class="mt-2 text-center text-sm text-gray-600">
       Already have an account?
-      <%= link_to "Sign in here", sign_in_path, class: "font-medium text-blue-600 hover:text-blue-500" %>
+      <%= link_to "Sign in here", new_user_session_path, class: "font-medium text-blue-600 hover:text-blue-500" %>
     </p>
   </div>
 
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
     <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-      <%= form_with model: @user, url: sign_up_path, local: true, class: "space-y-6" do |form| %>
+      <%= form_with model: @user, url: user_registration_path, local: true, class: "space-y-6" do |form| %>
         
         <!-- Display errors if any -->
         <% if @user.errors.any? %>

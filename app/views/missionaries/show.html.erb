@@ -39,8 +39,8 @@
           </p>
           
           <!-- Follow Button -->
-          <div class="mt-6" id="follow_button">
-            <%= render 'follow_button', missionary: @missionary, is_following: @is_following %>
+          <div class="mt-6">
+            <%= follow_button_for(@missionary.missionary_profile) %>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@
           <div class="bg-blue-50 rounded-lg p-6 text-center">
             <h3 class="text-lg font-semibold text-blue-900 mb-2">Connect with <%= @missionary.name %></h3>
             <p class="text-blue-700 text-sm mb-4">Sign up to follow updates and send messages</p>
-            <%= link_to "Sign Up", sign_up_path, 
+            <%= link_to "Sign Up", new_user_registration_path, 
                        class: "inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" %>
           </div>
         <% end %>

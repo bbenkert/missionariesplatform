@@ -1,0 +1,196 @@
+<div class="bg-white">
+  <!-- Page Header -->
+  <div class="bg-gray-50 px-4 py-5 border-b border-gray-200 sm:px-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Activity Feed</h1>
+        <p class="mt-1 text-sm text-gray-500">Ministry updates from <%= @organization.name %> missionaries</p>
+      </div>
+      <%= link_to "Back to Dashboard", organization_admin_dashboard_path, 
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="bg-white px-4 sm:px-6">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8">
+        <%= link_to "All", organization_admin_activity_path,
+                    class: "#{@filter == 'all' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" %>
+        <%= link_to "Published", organization_admin_activity_path(filter: 'published'),
+                    class: "#{@filter == 'published' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" %>
+        <%= link_to "Draft", organization_admin_activity_path(filter: 'draft'),
+                    class: "#{@filter == 'draft' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" %>
+        <%= link_to "Archived", organization_admin_activity_path(filter: 'archived'),
+                    class: "#{@filter == 'archived' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" %>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Updates List -->
+  <div class="px-4 py-6 sm:px-6">
+    <% if @updates.any? %>
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @updates.each do |update| %>
+            <li>
+              <div class="px-4 py-6 sm:px-6">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <% if update.user.avatar.attached? %>
+                        <%= image_tag update.user.avatar, class: "h-12 w-12 rounded-full" %>
+                      <% else %>
+                        <div class="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
+                          <span class="text-sm font-medium text-gray-700"><%= update.user.name.first %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="ml-4">
+                      <div class="flex items-center">
+                        <h3 class="text-lg font-medium text-blue-600 truncate">
+                          <%= link_to update.title, update_path(update) %>
+                        </h3>
+                        <div class="ml-2 flex-shrink-0 flex">
+                          <% case update.status %>
+                          <% when 'published' %>
+                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Published
+                            </p>
+                          <% when 'draft' %>
+                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                              Draft
+                            </p>
+                          <% when 'archived' %>
+                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              Archived
+                            </p>
+                          <% end %>
+                        </div>
+                      </div>
+                      <div class="mt-2 flex items-center text-sm text-gray-500">
+                        <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <p class="truncate">
+                          By <%= link_to update.user.name, missionary_path(update.user.missionary_profile), class: "text-blue-600 hover:text-blue-900" %>
+                        </p>
+                      </div>
+                      <div class="mt-1 flex items-center text-sm text-gray-500">
+                        <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4M3 11h18m-9 8V9m-8 0h16a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8a2 2 0 012-2z" />
+                        </svg>
+                        <p class="truncate">
+                          <%= update.category.humanize if update.category %>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center space-x-4">
+                    <!-- Stats -->
+                    <div class="text-right">
+                      <p class="text-sm text-gray-500">Views</p>
+                      <p class="text-lg font-semibold text-gray-900">
+                        <%= update.views_count || 0 %>
+                      </p>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex items-center space-x-2">
+                      <%= link_to "View", update_path(update), 
+                                  class: "text-blue-600 hover:text-blue-900 text-sm font-medium" %>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Content Preview -->
+                <% if update.excerpt.present? %>
+                  <div class="mt-4">
+                    <p class="text-sm text-gray-600 line-clamp-3">
+                      <%= truncate(strip_tags(update.excerpt), length: 200) %>
+                    </p>
+                  </div>
+                <% end %>
+                
+                <!-- Meta Information -->
+                <div class="mt-4 flex items-center justify-between text-xs text-gray-500">
+                  <div class="flex items-center space-x-4">
+                    <span>
+                      <% if update.status == 'published' %>
+                        Published <%= update.published_at&.strftime("%B %d, %Y at %l:%M %p") %>
+                      <% else %>
+                        Created <%= update.created_at.strftime("%B %d, %Y at %l:%M %p") %>
+                      <% end %>
+                    </span>
+                    <% if update.updated_at != update.created_at %>
+                      <span>Updated <%= time_ago_in_words(update.updated_at) %> ago</span>
+                    <% end %>
+                  </div>
+                  
+                  <div class="flex items-center space-x-2">
+                    <% if update.urgent? %>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.966-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                        Urgent
+                      </span>
+                    <% end %>
+                    
+                    <% if update.prayer_request? %>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Prayer Request
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      
+      <!-- Pagination -->
+      <% if respond_to?(:paginate) && @updates.respond_to?(:current_page) %>
+        <div class="mt-6">
+          <%= paginate @updates %>
+        </div>
+      <% end %>
+      
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">
+          <% case @filter %>
+          <% when 'published' %>
+            No published updates
+          <% when 'draft' %>
+            No draft updates
+          <% when 'archived' %>
+            No archived updates
+          <% else %>
+            No activity yet
+          <% end %>
+        </h3>
+        <p class="mt-1 text-sm text-gray-500">
+          <% case @filter %>
+          <% when 'published' %>
+            No updates have been published yet by your missionaries.
+          <% when 'draft' %>
+            No draft updates are currently saved.
+          <% when 'archived' %>
+            No updates have been archived.
+          <% else %>
+            When your missionaries post updates, they'll appear here.
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

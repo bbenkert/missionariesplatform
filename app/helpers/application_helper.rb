@@ -96,4 +96,33 @@ module ApplicationHelper
                   class: 'inline-block px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 rounded-full'
     end
   end
+
+  def follow_button_for(followable, options = {})
+    return unless user_signed_in?
+    return if current_user == followable.try(:user)
+    
+    render partial: 'follows/button', locals: { 
+      followable: followable, 
+      current_user: current_user 
+    }.merge(options)
+  end
+
+  def followers_count_display(followable)
+    count = followable.followers_count
+    if count == 1
+      "1 follower"
+    else
+      "#{count} followers"
+    end
+  end
+
+  def format_count(count)
+    if count < 1000
+      count.to_s
+    elsif count < 1_000_000
+      "#{(count / 1000.0).round(1)}K"
+    else
+      "#{(count / 1_000_000.0).round(1)}M"
+    end
+  end
 end

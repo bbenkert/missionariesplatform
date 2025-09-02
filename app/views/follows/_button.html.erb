@@ -1,0 +1,45 @@
+<% if user_signed_in? && current_user != followable.try(:user) %>
+  <div id="follow_button_<%= dom_id(followable) %>" class="follow-button-container">
+    <% if current_user.following?(followable) %>
+      <%= button_to follows_path, 
+          method: :delete,
+          params: { 
+            "#{followable.class.name.underscore}_id": followable.id 
+          },
+          remote: true,
+          data: { 
+            turbo_method: :delete,
+            turbo_confirm: "Stop following #{followable.try(:name) || followable.try(:user)&.name}?"
+          },
+          class: "w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2" do %>
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span>Following</span>
+      <% end %>
+    <% else %>
+      <%= button_to follows_path, 
+          method: :post,
+          params: { 
+            "#{followable.class.name.underscore}_id": followable.id 
+          },
+          remote: true,
+          data: { turbo_method: :post },
+          class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        <span>Follow</span>
+      <% end %>
+    <% end %>
+  </div>
+<% elsif user_signed_in? && current_user.supporter? == false %>
+  <div class="w-full bg-gray-400 text-white font-medium py-2 px-4 rounded-md text-center cursor-not-allowed">
+    Only supporters can follow
+  </div>
+<% elsif !user_signed_in? %>
+  <%= link_to new_user_session_path, 
+      class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2" do %>
+    <span>Sign in to Follow</span>
+  <% end %>
+<% end %>

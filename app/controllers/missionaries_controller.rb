@@ -63,40 +63,8 @@ class MissionariesController < ApplicationController
     @missionary = User.approved_missionaries.includes(:missionary_profile, :missionary_updates).find(params[:id])
     @updates = @missionary.missionary_updates.published.visible_to(current_user).recent.limit(10)
     @prayer_requests = @missionary.missionary_profile.prayer_requests.published.visible_to(current_user).recent.limit(5)
-    @is_following = current_user&.supporter_followings&.exists?(missionary: @missionary)
     @can_message = current_user&.can_message?(@missionary)
   rescue ActiveRecord::RecordNotFound
     redirect_to missionaries_path, alert: "Missionary not found or not approved"
-  end
-
-  def follow
-    require_authentication
-    return redirect_to missionaries_path, alert: "Only supporters can follow missionaries" unless current_user.supporter?
-
-    @missionary = User.missionaries.find(params[:id])
-
-    if current_user.supporter_followings.create(missionary: @missionary)
-      respond_to do |format|
-        format.html { redirect_back(fallback_location: missionary_path(@missionary), notice: "Now following #{@missionary.name}") }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("follow_button", partial: "missionaries/follow_button", locals: { missionary: @missionary, is_following: true }) }
-      end
-    else
-      redirect_back(fallback_location: missionary_path(@missionary), alert: "Unable to follow missionary")
-    end
-  end
-
-  def unfollow
-    require_authentication
-    @missionary = User.missionaries.find(params[:id])
-    following = current_user.supporter_followings.find_by(missionary: @missionary)
-
-    if following&.destroy
-      respond_to do |format|
-        format.html { redirect_to missionary_path(@missionary), notice: "Unfollowed #{@missionary.name}" }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("follow_button", partial: "missionaries/follow_button", locals: { missionary: @missionary, is_following: false }) }
-      end
-    else
-      redirect_to missionary_path(@missionary), alert: "Unable to unfollow missionary"
-    end
   end
 end

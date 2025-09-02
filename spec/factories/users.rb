@@ -20,6 +20,11 @@ FactoryBot.define do
       role { :admin }
       status { :approved }
     end
+    
+    trait :organization_admin do
+      role { :organization_admin }
+      status { :approved }
+    end
 
     trait :pending do
       status { :pending }

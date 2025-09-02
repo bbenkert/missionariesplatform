@@ -26,13 +26,19 @@ Rails.application.routes.draw do
       end
     end
   end
+  
+  # Organization Admin routes
+  scope :organization_admin, as: :organization_admin do
+    get '', to: 'organization_admin#dashboard', as: :dashboard
+    get :missionaries, to: 'organization_admin#missionaries'
+    get :supporters, to: 'organization_admin#supporters'
+    get :activity, to: 'organization_admin#activity'
+    get :settings, to: 'organization_admin#settings'
+    patch :settings, to: 'organization_admin#settings'
+  end
 
   # Missionary routes
   resources :missionaries, only: [:index, :show] do
-    member do
-      post :follow
-      delete :unfollow
-    end
     resources :updates, except: [:index]
   end
 
@@ -42,6 +48,9 @@ Rails.application.routes.draw do
       post :pray
     end
   end
+
+  # Follow system
+  resources :follows, only: [:create, :destroy]
 
   # User dashboard and profile
   get "dashboard", to: "dashboard#index"

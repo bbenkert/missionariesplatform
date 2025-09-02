@@ -67,10 +67,9 @@
             <div class="flex space-x-2">
               <%= link_to "View Profile", missionary_path(missionary), 
                          class: "flex-1 bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm" %>
-              <% if user_signed_in? && current_user.supporter? %>
-                <%= link_to "Follow", "#", 
-                           class: "flex-1 bg-gray-600 text-white text-center px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm" %>
-              <% end %>
+              <div class="flex-1">
+                <%= follow_button_for(missionary.missionary_profile) %>
+              </div>
             </div>
           </div>
         </div>

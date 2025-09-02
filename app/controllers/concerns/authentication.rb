@@ -26,7 +26,7 @@ module Authentication
   def require_authentication
     unless user_signed_in?
       store_location
-      redirect_to sign_in_path, alert: "Please sign in to continue."
+      redirect_to new_user_session_path, alert: "Please sign in to continue."
     end
   end
 
