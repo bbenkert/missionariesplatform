@@ -1,0 +1,74 @@
+<%# Sign In Page %>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div class="text-center">
+      <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-indigo-100">
+        <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+      </div>
+      <h2 class="mt-4 text-3xl font-bold text-gray-900">
+        Welcome back
+      </h2>
+      <p class="mt-2 text-sm text-gray-600">
+        Sign in to your missionary platform account
+      </p>
+    </div>
+    
+    <div class="bg-white py-8 px-6 shadow-xl rounded-lg">
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), local: true, html: { class: "space-y-6" }) do |form| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div>
+          <div class="flex items-center mb-2">
+            <svg class="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+            </svg>
+            <%= form.label :email, class: "text-sm font-medium text-gray-700" %>
+          </div>
+          <%= form.email_field :email, autofocus: true, autocomplete: "email",
+              class: "block w-full px-3 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm",
+              placeholder: "Enter your email" %>
+        </div>
+
+        <div>
+          <div class="flex items-center mb-2">
+            <svg class="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+            <%= form.label :password, class: "text-sm font-medium text-gray-700" %>
+          </div>
+          <%= form.password_field :password, autocomplete: "current-password",
+              class: "block w-full px-3 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm",
+              placeholder: "Enter your password" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="flex items-center">
+            <%= form.check_box :remember_me, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+            <%= form.label :remember_me, "Remember me", class: "ml-2 block text-sm text-gray-700" %>
+          </div>
+        <% end %>
+
+        <div>
+          <%= form.submit "Sign in", class: "w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" %>
+        </div>
+      <% end %>
+
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">Need an account?</span>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

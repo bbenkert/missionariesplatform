@@ -12,8 +12,15 @@ class ApplicationController < ActionController::Base
   
   # Devise handles authentication - we just need to set current user for our Current model
   before_action :set_current_user
+  before_action :configure_permitted_parameters, if: :devise_controller?
   
   protected
+  
+  # Devise parameter configuration
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role, :organization_id])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role, :organization_id])
+  end
   
   # Devise redirect after sign in
   def after_sign_in_path_for(resource)
