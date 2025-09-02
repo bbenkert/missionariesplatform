@@ -66,13 +66,7 @@ class MissionaryUpdate < ApplicationRecord
     'bg-red-100 text-red-800'
   end
 
-  protected # Changed from private to protected
-
-  def set_published_at
-    self.published_at = Time.current
-  end
-
-  private # Keep other methods private
+  private
 
   def notify_followers
     NotificationJob.perform_later('update_published', self.id)
@@ -80,5 +74,9 @@ class MissionaryUpdate < ApplicationRecord
 
   def update_tsvector
     self.tsvector = [title, content.to_plain_text].compact.join(' ')
+  end
+
+  def set_published_at
+    self.published_at = Time.current
   end
 end
