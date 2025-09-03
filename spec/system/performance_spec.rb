@@ -6,7 +6,7 @@ RSpec.describe "Application Performance", type: :system do
   end
 
   let!(:organization) { create(:organization, name: "Global Missions") }
-  let!(:supporter) { create(:user, :supporter, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"") }
+  let!(:supporter) { create(:user, :supporter, password: "SecurePassword123!", password_confirmation: "SecurePassword123!") }
 
   describe "Dashboard Performance" do
     before do
@@ -124,7 +124,7 @@ RSpec.describe "Application Performance", type: :system do
   end
 
   describe "AJAX Performance" do
-    let!(:missionary) { create(:user, :missionary, status: :approved, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"") }
+    let!(:missionary) { create(:user, :missionary, status: :approved, password: "SecurePassword123!", password_confirmation: "SecurePassword123!") }
     let!(:missionary_profile) { create(:missionary_profile, user: missionary, organization: organization) }
     let!(:prayer_request) { create(:prayer_request, missionary_profile: missionary_profile) }
 

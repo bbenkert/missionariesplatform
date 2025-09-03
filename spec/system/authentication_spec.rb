@@ -14,7 +14,7 @@ RSpec.describe "Authentication", type: :system do
       fill_in "Name", with: "John Supporter"
       fill_in "Email", with: "john@example.com"
       fill_in "Password", with: "password123"
-      fill_in "Confirm password: "SecurePassword123!", password_confirmation: "SecurePassword123!""
+      fill_in "Confirm password", with: "password123"
       select "I want to support missionaries", from: "Role"
       
       click_button "Create account"
@@ -34,7 +34,7 @@ RSpec.describe "Authentication", type: :system do
       fill_in "Name", with: "Jane Missionary"
       fill_in "Email", with: "jane@example.com"
       fill_in "Password", with: "password123"
-      fill_in "Confirm password: "SecurePassword123!", password_confirmation: "SecurePassword123!""
+      fill_in "Confirm password", with: "password123"
       select "I am a missionary", from: "Role"
       
       click_button "Create account"
@@ -72,9 +72,9 @@ RSpec.describe "Authentication", type: :system do
   end
 
   describe "User Sign In" do
-    let!(:user) { create(:user, :supporter, email: "supporter@example.com", password: "SecurePassword123!", password_confirmation: "SecurePassword123!"") }
-    let!(:pending_user) { create(:user, :missionary, status: :pending, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"") }
-    let!(:inactive_user) { create(:user, :supporter, is_active: false, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"") }
+    let!(:user) { create(:user, :supporter, email: "supporter@example.com", password: "SecurePassword123!", password_confirmation: "SecurePassword123!") }
+    let!(:pending_user) { create(:user, :missionary, status: :pending, password: "SecurePassword123!", password_confirmation: "SecurePassword123!") }
+    let!(:inactive_user) { create(:user, :supporter, is_active: false, password: "SecurePassword123!", password_confirmation: "SecurePassword123!") }
 
     it "allows valid users to sign in" do
       visit new_user_session_path
@@ -92,7 +92,7 @@ RSpec.describe "Authentication", type: :system do
     end
 
     it "redirects based on user role after sign in" do
-      admin = create(:user, :admin, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"")
+      admin = create(:user, :admin, password: "SecurePassword123!", password_confirmation: "SecurePassword123!")
       
       visit new_user_session_path
       fill_in "Email", with: admin.email
@@ -166,7 +166,7 @@ RSpec.describe "Authentication", type: :system do
   end
 
   describe "User Sign Out" do
-    let!(:user) { create(:user, :supporter, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"") }
+    let!(:user) { create(:user, :supporter, password: "SecurePassword123!", password_confirmation: "SecurePassword123!") }
 
     it "allows users to sign out" do
       visit new_user_session_path

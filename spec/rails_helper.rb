@@ -21,6 +21,7 @@ require 'rspec/rails'
 # require only the support files necessary.
 #
 # Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -62,4 +63,20 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Include FactoryBot methods
+  config.include FactoryBot::Syntax::Methods
+
+  # Include authentication helpers
+  config.include AuthenticationHelpers, type: :system
+  config.include AuthenticationHelpers, type: :request
+
+  # Configure Shoulda Matchers
+  config.include Shoulda::Matchers::ActiveRecord, type: :model
+  config.include Shoulda::Matchers::ActiveModel, type: :model
+
+  # Set up ActiveJob for testing
+  config.before(:suite) do
+    ActiveJob::Base.queue_adapter = :test
+  end
 end

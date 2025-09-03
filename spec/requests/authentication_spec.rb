@@ -27,14 +27,14 @@ RSpec.describe "User Authentication", type: :request do
     context 'with valid credentials' do
       it 'signs in the user and redirects to dashboard' do
         post user_session_path, params: {
-          user: { email: user.email, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"' }
+          user: { email: user.email, password: "SecurePassword123!" }
         }
         expect(response).to redirect_to(dashboard_path)
       end
 
       it 'redirects admin to admin dashboard' do
         post user_session_path, params: {
-          user: { email: admin.email, password: "SecurePassword123!", password_confirmation: "SecurePassword123!"' }
+          user: { email: admin.email, password: "SecurePassword123!" }
         }
         expect(response).to redirect_to(admin_root_path)
       end
