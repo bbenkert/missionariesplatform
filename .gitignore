@@ -64,3 +64,18 @@ Thumbs.db
 
 # Ignore local secrets
 /tmp/local_secret.txt
+
+# Ignore other temporary files
+*.log
+*.tmp
+*.bak
+*.old
+*.orig
+*.rej
+
+VPS_OPTIMIZATION.md
+TESTING_SUMMARY.md
+TEST_STATUS_REPORT.md
+DEVELOPMENT.md
+.gemini
+.github
