@@ -23,6 +23,7 @@ gem 'jbuilder'
 
 # Redis for ActionCable and caching
 gem 'redis', '~> 5.0'
+gem 'connection_pool', '~> 2.4' # Pin to 2.x for Rails 8.0.4 compatibility
 
 # Background job processing
 gem 'sidekiq', '~> 7.0'

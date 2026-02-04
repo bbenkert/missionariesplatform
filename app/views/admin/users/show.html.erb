@@ -113,8 +113,7 @@
               <div class="flex justify-between items-center">
                 <span class="text-sm font-medium text-gray-500">Organization</span>
                 <span class="text-sm text-gray-900">
-                  <%= link_to @user.organization.name, organization_path(@user.organization), 
-                      class: "text-blue-600 hover:text-blue-700" %>
+                  <%= @user.organization.name %>
                 </span>
               </div>
             <% end %>

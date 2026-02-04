@@ -149,7 +149,7 @@
 
           <!-- Content Preview -->
           <div class="text-gray-600 text-sm mb-4 line-clamp-3">
-            <%= truncate(strip_tags(prayer_update.content.to_plain_text), length: 120) %>
+            <%= truncate(strip_tags(prayer_update.content.to_s), length: 120) %>
           </div>
 
           <!-- Missionary Info -->

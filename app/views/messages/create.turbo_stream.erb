@@ -1,0 +1,55 @@
+<%= turbo_stream.append "messages-container" do %>
+  <div class="flex <%= @message.sender == current_user ? 'justify-end' : 'justify-start' %>">
+    <div class="max-w-xs lg:max-w-md">
+      <div class="flex items-start space-x-2 <%= @message.sender == current_user ? 'flex-row-reverse space-x-reverse' : '' %>">
+        <!-- Profile Picture -->
+        <div class="flex-shrink-0">
+          <% if @message.sender.avatar.attached? %>
+            <%= image_tag @message.sender.avatar, class: "h-8 w-8 rounded-full object-cover" %>
+          <% else %>
+            <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+              <span class="text-xs font-medium text-gray-600">
+                <%= @message.sender.name.first.upcase %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Message Content -->
+        <div class="flex flex-col">
+          <div class="px-4 py-2 rounded-2xl <%= @message.sender == current_user ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900' %>">
+            <p class="text-sm"><%= simple_format(@message.content.to_s) %></p>
+          </div>
+          <div class="mt-1 <%= @message.sender == current_user ? 'text-right' : 'text-left' %>">
+            <span class="text-xs text-gray-500">
+              <%= @message.created_at.strftime("%b %d, %Y at %l:%M %p") %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "message_form" do %>
+  <div id="message_form">
+    <%= form_with model: [@conversation, Message.new], url: conversation_messages_path(@conversation), local: false do |form| %>
+      <div class="flex space-x-4">
+        <%= form.text_area :content, 
+                           placeholder: "Type your message...", 
+                           rows: 3,
+                           class: "flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" %>
+        <%= form.submit "Send", 
+                       class: "px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 self-end" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  // Auto-scroll to bottom of messages
+  const messagesContainer = document.getElementById('messages-container');
+  if (messagesContainer) {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+</script>

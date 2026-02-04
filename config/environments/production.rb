@@ -35,7 +35,11 @@ Rails.application.configure do
     url: ENV.fetch('REDIS_URL', 'redis://redis:6379/0'),
     expires_in: 30.minutes,
     race_condition_ttl: 10.seconds,
-    namespace: 'missionary_platform_cache'
+    namespace: 'missionary_platform_cache',
+    reconnect_attempts: 1,
+    error_handler: -> (method:, returning:, exception:) {
+      Rails.logger.error("Redis error: #{exception.message}")
+    }
   }
 
   # Session store with Redis using cache store

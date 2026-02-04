@@ -27,7 +27,8 @@ Rails.application.configure do
     config.cache_store = :redis_cache_store, {
       url: ENV.fetch('REDIS_URL', 'redis://redis:6379/0'),
       expires_in: 30.minutes,
-      namespace: 'missionary_platform_dev_cache'
+      namespace: 'missionary_platform_dev_cache',
+      reconnect_attempts: 1
     }
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"

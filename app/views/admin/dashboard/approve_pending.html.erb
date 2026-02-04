@@ -1,0 +1,115 @@
+<% content_for :title, "Approve Pending Missionaries" %>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <%= link_to admin_root_path, class: "text-sm text-gray-600 hover:text-gray-900 mb-4 inline-flex items-center" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Dashboard
+      <% end %>
+      
+      <h1 class="text-3xl font-bold text-gray-900 mt-2">Approve Pending Missionaries</h1>
+      <p class="mt-2 text-gray-600">Review and approve missionaries waiting for activation</p>
+    </div>
+
+    <% if @pending_missionaries.any? %>
+      <%= form_with url: admin_approve_pending_missionaries_path, method: :post do |f| %>
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+          <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <div>
+              <h3 class="text-lg font-medium text-gray-900">
+                <%= pluralize(@pending_missionaries.count, 'missionary') %> awaiting approval
+              </h3>
+            </div>
+            <div class="flex space-x-2">
+              <button type="button" 
+                      onclick="document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true)"
+                      class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium">
+                Select All
+              </button>
+              <button type="button" 
+                      onclick="document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)"
+                      class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium">
+                Deselect All
+              </button>
+              <button type="submit"
+                      class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
+                Approve Selected
+              </button>
+            </div>
+          </div>
+
+          <div class="divide-y divide-gray-200">
+            <% @pending_missionaries.each do |missionary| %>
+              <div class="px-6 py-4 hover:bg-gray-50">
+                <div class="flex items-center space-x-4">
+                  <input type="checkbox" 
+                         name="missionary_ids[]" 
+                         value="<%= missionary.id %>"
+                         class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  
+                  <% if missionary.missionary_profile&.profile_photo_url %>
+                    <img src="<%= missionary.missionary_profile.profile_photo_url %>" 
+                         class="h-12 w-12 rounded-full object-cover"
+                         alt="<%= missionary.name %>">
+                  <% else %>
+                    <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">
+                      <%= missionary.name.first.upcase %>
+                    </div>
+                  <% end %>
+                  
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h4 class="text-base font-medium text-gray-900"><%= missionary.name %></h4>
+                        <p class="text-sm text-gray-500"><%= missionary.email %></p>
+                      </div>
+                      
+                      <div class="flex items-center space-x-4 text-sm text-gray-600">
+                        <% if missionary.missionary_profile %>
+                          <div>
+                            <span class="font-medium">Organization:</span>
+                            <%= missionary.missionary_profile.organization&.name || 'N/A' %>
+                          </div>
+                          <div>
+                            <span class="font-medium">Country:</span>
+                            <%= missionary.missionary_profile.country || 'N/A' %>
+                          </div>
+                        <% end %>
+                        <div>
+                          <span class="font-medium">Registered:</span>
+                          <%= time_ago_in_words(missionary.created_at) %> ago
+                        </div>
+                      </div>
+                      
+                      <%= link_to "View Profile", admin_missionary_path(missionary), 
+                          class: "text-blue-600 hover:text-blue-800 font-medium", 
+                          target: "_blank" %>
+                    </div>
+                    
+                    <% if missionary.missionary_profile&.bio.present? %>
+                      <p class="mt-2 text-sm text-gray-700 line-clamp-2">
+                        <%= truncate(missionary.missionary_profile.bio, length: 200) %>
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-white shadow-lg rounded-lg p-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No pending missionaries</h3>
+        <p class="mt-2 text-gray-600">All missionaries have been reviewed and approved.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

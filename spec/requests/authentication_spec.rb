@@ -1,8 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe "User Authentication", type: :request do
-  let(:user) { create(:user, email: 'user@example.com', password: "SecurePassword123!", password_confirmation: "SecurePassword123!"') }
-  let(:admin) { create(:user, :admin, email: 'admin@example.com', password: "SecurePassword123!", password_confirmation: "SecurePassword123!"') }
+  let(:user) do
+    create(:user, email: 'user@example.com', password: "SecurePassword123!", password_confirmation: "SecurePassword123!")
+  end
+  
+  let(:admin) do
+    create(:user, :admin, email: 'admin@example.com', password: "SecurePassword123!", password_confirmation: "SecurePassword123!")
+  end
 
   describe 'GET /users/sign_in' do
     context 'when user is not signed in' do

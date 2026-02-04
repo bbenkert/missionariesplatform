@@ -127,40 +127,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <%= form.label :city, class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= form.text_field :city, class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200" %>
-          </div>
-
-          <div>
-            <%= form.label :country, class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= form.text_field :country, class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200" %>
-          </div>
-
-          <div>
-            <%= form.label :time_zone, class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= form.select :time_zone, 
-                options_for_select(ActiveSupport::TimeZone.all.map { |tz| [tz.to_s, tz.name] }, @user.time_zone), 
-                { prompt: 'Select Time Zone' }, 
-                { class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200" } %>
-          </div>
-
-          <div>
-            <%= form.label :language, class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= form.select :language, 
-                options_for_select([
-                  ['English', 'en'],
-                  ['Spanish', 'es'],
-                  ['French', 'fr'],
-                  ['Portuguese', 'pt'],
-                  ['German', 'de'],
-                  ['Chinese', 'zh'],
-                  ['Russian', 'ru'],
-                  ['Arabic', 'ar']
-                ], @user.language), 
-                { prompt: 'Select Language' }, 
-                { class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200" } %>
-          </div>
         </div>
       </div>
 
@@ -221,10 +187,10 @@
               <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
                 <h3 class="font-medium text-blue-900 mb-2">Missionary Profile Status</h3>
                 <p class="text-blue-700 text-sm mb-3">
-                  Status: <span class="font-medium"><%= @user.missionary_profile.status.humanize %></span>
+                  User Status: <span class="font-medium"><%= @user.status.humanize %></span>
                 </p>
                 <div class="flex space-x-3">
-                  <% unless @user.missionary_profile.approved? %>
+                  <% unless @user.approved? %>
                     <%= link_to approve_missionary_admin_user_path(@user), method: :patch, 
                         class: "inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200",
                         data: { confirm: "Are you sure you want to approve this missionary?" } do %>
@@ -232,7 +198,7 @@
                       Approve Missionary
                     <% end %>
                   <% end %>
-                  <%= link_to admin_missionary_path(@user.missionary_profile), 
+                  <%= link_to admin_user_path(@user), 
                       class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200" do %>
                     <i class="fas fa-user-check mr-2"></i>
                     View Missionary Profile
@@ -260,7 +226,7 @@
                 <i class="fas fa-play mr-2"></i>
                 Activate User
               <% end %>
-            <% elsif @user.active? %>
+            <% elsif @user.is_active? %>
               <%= link_to suspend_admin_user_path(@user), method: :patch,
                   class: "inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105",
                   data: { confirm: "Are you sure you want to suspend this user?" } do %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_230011) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_04_022753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -258,10 +258,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_230011) do
     t.bigint "organization_id"
     t.datetime "remember_created_at"
     t.integer "sign_in_count", default: 0, null: false
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "last_sign_in_at"
+    t.string "last_sign_in_ip"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
+    t.index ["settings"], name: "index_users_on_settings", using: :gin
     t.index ["status"], name: "index_users_on_status"
   end
 

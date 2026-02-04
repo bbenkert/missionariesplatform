@@ -1,0 +1,262 @@
+<% content_for :title, "Missionary Management" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Missionary Management
+          </h1>
+          <p class="mt-2 text-gray-600">
+            Review and manage missionary profiles and applications
+          </p>
+        </div>
+        <div class="flex space-x-3">
+          <%= link_to "Export Data", "#", 
+              class: "bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Missionaries</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @missionaries.count %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Pending Approval</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @missionaries.select(&:pending?).count %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Approved</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @missionaries.select(&:approved?).count %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Active</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @missionaries.select(&:is_active?).count %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Missionaries Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          All Missionaries (<%= @pagy.count %>)
+        </h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Missionary
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Organization & Location
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Activity
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Joined
+              </th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @missionaries.each_with_index do |missionary, index| %>
+              <tr class="hover:bg-blue-50 transition-colors duration-150 <%= 'bg-gray-50' if index.even? %>">
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-12 w-12">
+                      <% if missionary.avatar.attached? %>
+                        <%= image_tag missionary.avatar, class: "h-12 w-12 rounded-full object-cover" %>
+                      <% else %>
+                        <div class="h-12 w-12 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-semibold text-lg">
+                          <%= missionary.name.first.upcase %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= link_to missionary.name, admin_user_path(missionary), class: "hover:text-blue-600 transition-colors" %>
+                      </div>
+                      <div class="text-sm text-gray-500"><%= missionary.email %></div>
+                    </div>
+                  </div>
+                </td>
+                
+                <td class="px-6 py-4">
+                  <% if missionary.missionary_profile %>
+                    <div class="text-sm text-gray-900">
+                      <%= missionary.missionary_profile.organization&.name || "No Organization" %>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <%= missionary.missionary_profile.city %>, <%= missionary.missionary_profile.country %>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                      <%= missionary.missionary_profile.ministry_focus %>
+                    </div>
+                  <% else %>
+                    <span class="text-sm text-gray-400">Profile incomplete</span>
+                  <% end %>
+                </td>
+                
+                <td class="px-6 py-4">
+                  <div class="space-y-2">
+                    <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                      <%= case missionary.status
+                          when 'pending' then 'bg-yellow-100 text-yellow-800'
+                          when 'approved' then 'bg-green-100 text-green-800'
+                          when 'flagged' then 'bg-red-100 text-red-800'
+                          when 'suspended' then 'bg-gray-100 text-gray-800'
+                          end %>">
+                      <%= missionary.status.humanize %>
+                    </span>
+                    <br>
+                    <% if missionary.is_active? %>
+                      <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Active
+                      </span>
+                    <% else %>
+                      <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                        Inactive
+                      </span>
+                    <% end %>
+                  </div>
+                </td>
+                
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <div class="space-y-1">
+                    <div>Updates: <%= missionary.missionary_updates.count %></div>
+                    <div>Prayers: <%= missionary.prayer_requests.count %></div>
+                    <div>Followers: <%= missionary.followers_count %></div>
+                  </div>
+                </td>
+                
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <%= missionary.created_at.strftime("%b %d, %Y") %>
+                </td>
+                
+                <td class="px-6 py-4 text-right text-sm font-medium">
+                  <div class="flex justify-end items-center gap-2">
+                    <%= link_to "View", admin_user_path(missionary), 
+                        class: "inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" %>
+                    
+                    <% if missionary.pending? %>
+                      <%= button_to approve_admin_missionary_path(missionary), 
+                          method: :patch,
+                          class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors",
+                          form: { data: { turbo_confirm: "Approve this missionary?" } } do %>
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Approve
+                      <% end %>
+                    <% end %>
+                    
+                    <% if missionary.is_active? %>
+                      <%= button_to toggle_visibility_admin_missionary_path(missionary), 
+                          method: :patch,
+                          class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors",
+                          form: { data: { turbo_confirm: "Hide this missionary?" } } do %>
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                        </svg>
+                        Hide
+                      <% end %>
+                    <% else %>
+                      <%= button_to toggle_visibility_admin_missionary_path(missionary), 
+                          method: :patch,
+                          class: "inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors",
+                          form: { data: { turbo_confirm: "Show this missionary?" } } do %>
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        Show
+                      <% end %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <% if @pagy.pages > 1 %>
+        <div class="px-6 py-4 border-t border-gray-200">
+          <div class="flex justify-center">
+            <%== pagy_bootstrap_nav(@pagy) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

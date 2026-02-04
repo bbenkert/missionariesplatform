@@ -38,7 +38,7 @@ Rails.application.routes.draw do
         patch :toggle_visibility
       end
     end
-    resources :users, only: [:index, :show, :edit, :update] do
+    resources :users, only: [:index, :show, :edit, :update, :new, :create] do
       collection do
         patch :bulk_actions
       end
@@ -54,6 +54,14 @@ Rails.application.routes.draw do
         patch :bulk_update
       end
     end
+    resources :organizations, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+    resource :exports, only: [:create]
+    resources :announcements, only: [:new, :create]
+    
+    # Quick action routes
+    get 'approve_pending', to: 'dashboard#approve_pending', as: :approve_pending
+    post 'approve_pending_missionaries', to: 'dashboard#approve_pending_missionaries', as: :approve_pending_missionaries
+    get 'flagged_content', to: 'dashboard#flagged_content', as: :flagged_content
   end
   
   # Organization Admin routes

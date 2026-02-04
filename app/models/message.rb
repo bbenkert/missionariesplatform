@@ -6,8 +6,8 @@ class Message < ApplicationRecord
   validates :sender, presence: true
   validates :conversation, presence: true
 
-  # Rich text content
-  has_rich_text :content
+  # Note: Using regular content column, not ActionText
+  # has_rich_text :content
 
   # Scopes
   scope :recent, -> { order(created_at: :desc) }
@@ -31,7 +31,7 @@ class Message < ApplicationRecord
   end
 
   def excerpt(limit = 100)
-    content.to_plain_text.truncate(limit)
+    content.to_s.truncate(limit)
   end
 
   private

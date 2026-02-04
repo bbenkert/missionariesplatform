@@ -188,7 +188,7 @@
               <svg class="flex-shrink-0 mr-2 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
               </svg>
-              <%= @prayer_request.missionary_profile.location || "Location not specified" %>
+              <%= @prayer_request.missionary_profile.location_display.presence || "Location not specified" %>
             </div>
             
             <div class="flex items-center text-sm text-gray-600">

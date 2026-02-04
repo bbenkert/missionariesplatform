@@ -310,7 +310,7 @@
                         </p>
                         <p class="text-sm text-gray-600 truncate">
                           <% if conversation.last_message %>
-                            <%= truncate(conversation.last_message.content.to_plain_text, length: 50) %>
+                            <%= truncate(conversation.last_message.content.to_s, length: 50) %>
                           <% else %>
                             New conversation
                           <% end %>

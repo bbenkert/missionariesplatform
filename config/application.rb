@@ -24,6 +24,11 @@ module MissionaryPlatform
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # Host authorization for different environments
+    if Rails.env.test?
+      config.hosts.clear # Disable host checking in test environment
+    end
+
     # Active Job configuration - Use inline for non-Docker, Sidekiq for Docker
     config.active_job.queue_adapter = :inline
 

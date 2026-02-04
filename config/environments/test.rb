@@ -6,6 +6,9 @@ require "active_support/core_ext/integer/time"
 # and recreated between test runs. Don't rely on the data there!
 
 Rails.application.configure do
+  # Disable host authorization in test environment first
+  config.hosts.clear
+  
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.cache_classes = true
@@ -27,6 +30,9 @@ Rails.application.configure do
 
   # Set a fixed host for URL generation in tests
   config.action_controller.default_url_options = { host: 'www.example.com', port: 80 }
+
+  # Disable host authorization in test environment
+  config.hosts.clear
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = :rescuable

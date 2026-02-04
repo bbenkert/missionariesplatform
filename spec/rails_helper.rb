@@ -30,7 +30,23 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
+# Include Warden test helpers
+require 'warden/test/helpers'
+require 'devise'
+
 RSpec.configure do |config|
+  # Include Devise test helpers for controller specs
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  
+  # Include Warden helpers for authentication in request specs
+  config.include Warden::Test::Helpers
+  
+  # Clean up Warden after each test
+  config.after(:each) do
+    Warden.test_reset!
+  end
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')

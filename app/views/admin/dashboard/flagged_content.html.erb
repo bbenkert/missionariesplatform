@@ -1,0 +1,116 @@
+<% content_for :title, "Flagged Content Review" %>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <%= link_to admin_root_path, class: "text-sm text-gray-600 hover:text-gray-900 mb-4 inline-flex items-center" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Dashboard
+      <% end %>
+      
+      <h1 class="text-3xl font-bold text-gray-900 mt-2">Flagged Content Review</h1>
+      <p class="mt-2 text-gray-600">Review and moderate flagged users, updates, and prayer requests</p>
+    </div>
+
+    <!-- Flagged Users -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="px-6 py-4 bg-red-50 border-b border-red-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          Flagged Users (<%= @flagged_users.count %>)
+        </h3>
+      </div>
+      <div class="px-6 py-4">
+        <% if @flagged_users.any? %>
+          <div class="space-y-3">
+            <% @flagged_users.each do |user| %>
+              <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+                <div class="flex items-center space-x-3">
+                  <div class="h-10 w-10 rounded-full bg-red-200 flex items-center justify-center text-red-700 font-bold">
+                    <%= user.name.first.upcase %>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900"><%= user.name %></p>
+                    <p class="text-sm text-gray-600"><%= user.email %> • <%= user.role.humanize %></p>
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <%= link_to "View", admin_user_path(user), class: "px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
+                  <%= button_to "Activate", activate_admin_user_path(user), method: :patch, class: "px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm" %>
+                  <%= button_to "Suspend", suspend_admin_user_path(user), method: :patch, data: { confirm: 'Are you sure?' }, class: "px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-gray-500 text-center py-4">No flagged users</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Flagged Prayer Requests -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="px-6 py-4 bg-orange-50 border-b border-orange-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          Flagged Prayer Requests (<%= @flagged_prayer_requests.count %>)
+        </h3>
+      </div>
+      <div class="px-6 py-4">
+        <% if @flagged_prayer_requests.any? %>
+          <div class="space-y-3">
+            <% @flagged_prayer_requests.each do |prayer_request| %>
+              <div class="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
+                <div class="flex-1">
+                  <p class="font-medium text-gray-900"><%= prayer_request.title %></p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    by <%= prayer_request.missionary_profile.user.name %> • 
+                    <%= time_ago_in_words(prayer_request.created_at) %> ago
+                  </p>
+                </div>
+                <div class="flex space-x-2">
+                  <%= link_to "View", admin_prayer_request_path(prayer_request), class: "px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
+                  <%= button_to "Delete", admin_prayer_request_path(prayer_request), method: :delete, data: { confirm: 'Are you sure?' }, class: "px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-gray-500 text-center py-4">No flagged prayer requests</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Flagged Updates -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="px-6 py-4 bg-yellow-50 border-b border-yellow-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          Flagged Updates (<%= @flagged_updates.count %>)
+        </h3>
+      </div>
+      <div class="px-6 py-4">
+        <% if @flagged_updates.any? %>
+          <div class="space-y-3">
+            <% @flagged_updates.each do |update| %>
+              <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+                <div class="flex-1">
+                  <p class="font-medium text-gray-900"><%= truncate(update.content, length: 100) %></p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    by <%= update.user.name %> • 
+                    <%= time_ago_in_words(update.created_at) %> ago
+                  </p>
+                </div>
+                <div class="flex space-x-2">
+                  <%= link_to "View", missionary_update_path(update), target: "_blank", class: "px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-gray-500 text-center py-4">No flagged updates</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

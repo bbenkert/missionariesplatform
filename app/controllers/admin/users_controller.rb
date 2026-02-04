@@ -41,6 +41,28 @@ class Admin::UsersController < ApplicationController
     # Load for editing
   end
 
+  def new
+    @user = User.new
+  end
+
+  def create
+    @user = User.new(user_create_params)
+    
+    # Generate temporary password if not provided
+    if params[:user][:password].blank?
+      temp_password = SecureRandom.alphanumeric(12)
+      @user.password = temp_password
+      @user.password_confirmation = temp_password
+    end
+    
+    if @user.save
+      # TODO: Send welcome email with temporary password
+      redirect_to admin_user_path(@user), notice: 'User created successfully'
+    else
+      render :new
+    end
+  end
+
   def update
     if @user.update(user_params)
       redirect_to admin_user_path(@user), notice: 'User updated successfully'
@@ -120,6 +142,10 @@ class Admin::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :role, :status, :is_active, :organization_id)
+  end
+
+  def user_create_params
+    params.require(:user).permit(:name, :email, :role, :status, :is_active, :organization_id, :password, :password_confirmation)
   end
 
   def recent_activity_for_user(user)

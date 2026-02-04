@@ -13,14 +13,32 @@
             </p>
             <div class="mt-4 flex items-center space-x-6">
               <div class="flex items-center text-indigo-100">
-                <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                <span class="text-sm">System Status: Healthy</span>
+                <% status_color = case @system_health[:status]
+                   when 'healthy' then 'bg-green-400'
+                   when 'degraded' then 'bg-yellow-400'
+                   when 'critical' then 'bg-red-400'
+                   else 'bg-gray-400'
+                   end %>
+                <div class="w-2 h-2 <%= status_color %> rounded-full mr-2 animate-pulse"></div>
+                <span class="text-sm">System Status: <%= @system_health[:status].capitalize %></span>
+                <% if @system_health[:issues].any? %>
+                  <button type="button" 
+                          class="ml-2 text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded"
+                          onclick="alert('<%= @system_health[:issues].join('\n') %>')">
+                    <%= @system_health[:issues].length %> issue<%= @system_health[:issues].length > 1 ? 's' : '' %>
+                  </button>
+                <% end %>
               </div>
               <div class="flex items-center text-indigo-100">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
-                <span class="text-sm">Active Sessions: <%= @active_sessions || 0 %></span>
+                <span class="text-sm">Active Sessions: <%= @active_sessions %></span>
+              </div>
+              <div class="flex items-center text-indigo-100 text-xs space-x-3">
+                <span title="Database"><%= @system_health[:checks][:database] ? '✓ DB' : '✗ DB' %></span>
+                <span title="Redis"><%= @system_health[:checks][:redis] ? '✓ Cache' : '✗ Cache' %></span>
+                <span title="Storage"><%= @system_health[:checks][:storage] ? '✓ Storage' : '✗ Storage' %></span>
               </div>
             </div>
           </div>
@@ -28,13 +46,44 @@
           <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
             <%= link_to "View Site", root_path, 
                 target: "_blank",
-                class: "bg-white text-indigo-600 hover:bg-indigo-50 font-medium py-2 px-4 rounded-md transition-colors inline-flex items-center" %>
-            <button class="bg-indigo-500 hover:bg-indigo-400 text-white font-medium py-2 px-4 rounded-md transition-colors inline-flex items-center">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-              </svg>
-              Export Data
-            </button>
+                class: "bg-white text-indigo-600 hover:bg-indigo-50 font-medium py-2 px-4 rounded-md transition-colors inline-flex items-center justify-center" %>
+            
+            <!-- Export Data Dropdown -->
+            <div class="relative" data-controller="dropdown">
+              <button type="button"
+                      data-action="click->dropdown#toggle click@window->dropdown#hide"
+                      class="bg-indigo-500 hover:bg-indigo-400 text-white font-medium py-2 px-4 rounded-md transition-colors inline-flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                Export Data
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              
+              <div data-dropdown-target="menu"
+                   class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div class="py-1">
+                  <%= link_to "Export All Users (CSV)", admin_exports_path(export_type: 'users'), 
+                      method: :post,
+                      data: { turbo_method: :post },
+                      class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <%= link_to "Export Missionaries (CSV)", admin_exports_path(export_type: 'missionaries'), 
+                      method: :post,
+                      data: { turbo_method: :post },
+                      class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <%= link_to "Export Prayer Requests (CSV)", admin_exports_path(export_type: 'prayer_requests'), 
+                      method: :post,
+                      data: { turbo_method: :post },
+                      class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <%= link_to "Export Dashboard (JSON)", admin_exports_path(export_type: 'dashboard'), 
+                      method: :post,
+                      data: { turbo_method: :post },
+                      class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -181,63 +230,42 @@
       </div>
       <div class="p-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg">
+          <%= link_to new_admin_user_path, 
+              class: "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg" do %>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
             </svg>
             <span class="font-medium">Add User</span>
-          </button>
+          <% end %>
           
-          <button class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg">
+          <%= link_to admin_approve_pending_path,
+              class: "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg" do %>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span class="font-medium">Approve Pending</span>
-          </button>
+            <span class="font-medium">Approve Pending (<%= @pending_missionaries %>)</span>
+          <% end %>
           
-          <button class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg">
+          <%= link_to new_admin_announcement_path,
+              class: "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg" do %>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
             </svg>
             <span class="font-medium">Send Announcement</span>
-          </button>
+          <% end %>
           
-          <button class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg">
+          <%= link_to admin_flagged_content_path,
+              class: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white p-4 rounded-lg transition-all duration-200 flex items-center space-x-3 shadow-md hover:shadow-lg" do %>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.966-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
             </svg>
             <span class="font-medium">Review Flagged</span>
-          </button>
+          <% end %>
         </div>
-      </div>
-    </div>>
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-100 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Prayers</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @total_prayer_actions %></dd>
-            </dl>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-sm text-gray-600">
-            Organizations: <%= @total_organizations %>
-          </div>
-        </div>
-      </div>
-      <div class="bg-gray-50 px-5 py-3">
-        <%= link_to "View Organizations", "#", class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
       </div>
     </div>
-  </div>
 
-  <!-- Management Sections -->
+    <!-- Management Sections -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
     <!-- Recent Prayer Requests -->
     <div class="bg-white shadow rounded-lg">

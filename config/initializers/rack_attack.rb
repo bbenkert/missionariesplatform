@@ -1,5 +1,8 @@
 # Rate limiting configuration
 class Rack::Attack
+  # Configure cache store for Rack::Attack (must use Rails.cache in development)
+  Rack::Attack.cache.store = Rails.cache
+  
   # Always allow requests from localhost (for development)
   safelist('allow-localhost') do |req|
     req.ip == '127.0.0.1' || req.ip == '::1'

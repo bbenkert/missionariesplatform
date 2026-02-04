@@ -5,22 +5,37 @@ class PrayerRequestsController < ApplicationController
   before_action :ensure_missionary_profile, only: [:new, :create, :edit, :update, :destroy]
   
   def index
-    # Get traditional prayer requests
-    prayer_requests = PrayerRequest.joins(:missionary_profile)
-                                   .where(missionary_profiles: { safety_mode: :public_mode })
-                                   .includes(:missionary_profile, :praying_users)
-                                   .status_open
-                                   .recent
-                                   .limit(25)
-    
-    # Get missionary updates that are prayer requests
-    prayer_updates = MissionaryUpdate.joins(user: :missionary_profile)
+    # Admins can see all prayer requests
+    if current_user&.admin?
+      prayer_requests = PrayerRequest.joins(:missionary_profile)
+                                     .includes(:missionary_profile, :praying_users)
+                                     .status_open
+                                     .recent
+                                     .limit(50)
+      
+      prayer_updates = MissionaryUpdate.joins(user: :missionary_profile)
+                                       .where(update_type: :prayer_request, status: :published)
+                                       .includes(user: :missionary_profile)
+                                       .recent
+                                       .limit(50)
+    else
+      # Get traditional prayer requests (public only for non-admins)
+      prayer_requests = PrayerRequest.joins(:missionary_profile)
                                      .where(missionary_profiles: { safety_mode: :public_mode })
-                                     .where(update_type: :prayer_request, status: :published)
-                                     .where(visibility: [:public_visibility, :followers_only])
-                                     .includes(user: :missionary_profile)
+                                     .includes(:missionary_profile, :praying_users)
+                                     .status_open
                                      .recent
                                      .limit(25)
+      
+      # Get missionary updates that are prayer requests (public only for non-admins)
+      prayer_updates = MissionaryUpdate.joins(user: :missionary_profile)
+                                       .where(missionary_profiles: { safety_mode: :public_mode })
+                                       .where(update_type: :prayer_request, status: :published)
+                                       .where(visibility: [:public_visibility, :followers_only])
+                                       .includes(user: :missionary_profile)
+                                       .recent
+                                       .limit(25)
+    end
     
     # Apply search filter if present
     if params[:search].present?
@@ -162,6 +177,9 @@ class PrayerRequestsController < ApplicationController
   end
 
   def can_view_prayer_request?(prayer_request)
+    # Admins can view all prayer requests
+    return true if current_user&.admin?
+    
     missionary_profile = prayer_request.missionary_profile
     
     case missionary_profile.safety_mode

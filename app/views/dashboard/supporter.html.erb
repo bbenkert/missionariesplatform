@@ -230,7 +230,7 @@
                     request_path = missionary_update_path(prayer_request.user, prayer_request)
                     author_user = prayer_request.user
                     title = prayer_request.title
-                    description = prayer_request.content.to_plain_text if prayer_request.content.present?
+                    description = prayer_request.content.to_s if prayer_request.content.present?
                     urgency = nil
                     prayer_count = 0 # MissionaryUpdates don't have prayer_actions yet
                   end

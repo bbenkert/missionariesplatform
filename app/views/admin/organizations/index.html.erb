@@ -1,0 +1,130 @@
+<% content_for :title, "Organizations" %>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <%= link_to admin_root_path, class: "text-sm text-gray-600 hover:text-gray-900 mb-4 inline-flex items-center" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back to Dashboard
+        <% end %>
+        
+        <h1 class="text-3xl font-bold text-gray-900 mt-2">Organizations</h1>
+        <p class="mt-2 text-gray-600">Manage missionary organizations</p>
+      </div>
+      
+      <%= link_to new_admin_organization_path, 
+          class: "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium inline-flex items-center" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add Organization
+      <% end %>
+    </div>
+
+    <!-- Organizations List -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Organization
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Contact
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Missionaries
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Followers
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Created
+            </th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% if @organizations.any? %>
+            <% @organizations.each do |org| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 flex-shrink-0">
+                      <% if org.logo_url.present? %>
+                        <img class="h-10 w-10 rounded-full" src="<%= org.logo_url %>" alt="<%= org.name %>">
+                      <% else %>
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">
+                          <%= org.name.first.upcase %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900"><%= org.name %></div>
+                      <% if org.website.present? %>
+                        <div class="text-sm text-blue-600">
+                          <%= link_to org.website, org.website, target: "_blank", class: "hover:underline" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if org.contact_email.present? %>
+                    <div class="text-sm text-gray-900"><%= org.contact_email %></div>
+                  <% end %>
+                  <% if org.phone.present? %>
+                    <div class="text-sm text-gray-500"><%= org.phone %></div>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= org.missionaries_count %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= org.followers_count %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= time_ago_in_words(org.created_at) %> ago
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex justify-end space-x-2">
+                    <%= link_to "View", admin_organization_path(org), 
+                        class: "text-blue-600 hover:text-blue-900" %>
+                    <%= link_to "Edit", edit_admin_organization_path(org), 
+                        class: "text-indigo-600 hover:text-indigo-900" %>
+                    <%= button_to "Delete", admin_organization_path(org), 
+                        method: :delete,
+                        data: { confirm: "Are you sure you want to delete #{org.name}?" },
+                        class: "text-red-600 hover:text-red-900" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <p class="mt-4">No organizations found</p>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <% if defined?(@pagy) && @pagy.pages > 1 %>
+      <div class="mt-6">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>
